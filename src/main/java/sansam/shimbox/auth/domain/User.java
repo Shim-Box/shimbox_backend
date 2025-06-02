@@ -40,21 +40,20 @@ public class User extends BaseTimeEntity {
     @Column(name = "identification_number",  length = 7, nullable = false)
     private String identificationNumber;
 
+    @Column(name = "phone_number", length = 15, nullable = false)
+    private String phoneNumber;
+
     @Column(name = "residence", length = 100, nullable = false)
     private String residence;
 
     @Column(name = "height", nullable = false)
-    private Long height;
+    private Integer height;
 
     @Column(name = "weight", nullable = false)
-    private Long weight;
+    private Integer weight;
 
     @Column(name = "license_image", nullable = false)
     private String licenseImage;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "license", nullable = false)
-    private License license;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "career", nullable = false)

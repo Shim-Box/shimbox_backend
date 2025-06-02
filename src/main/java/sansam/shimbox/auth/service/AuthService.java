@@ -10,7 +10,7 @@ import sansam.shimbox.auth.dto.request.RequestUserLoginDto;
 import sansam.shimbox.auth.dto.request.RequestUserSaveDto;
 import sansam.shimbox.auth.dto.response.TokenDto;
 import sansam.shimbox.auth.dto.response.ResponseUserSaveDto;
-import sansam.shimbox.auth.enums.Role;
+import sansam.shimbox.auth.enums.*;
 import sansam.shimbox.auth.repository.UserRepository;
 import sansam.shimbox.global.exception.CustomException;
 import sansam.shimbox.global.exception.ErrorCode;
@@ -34,6 +34,19 @@ public class AuthService {
         User user = User.builder()
                 .email(dto.getEmail())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
+                .name(dto.getName())
+                .identificationNumber(dto.getIdentificationNumber())
+                .phoneNumber(dto.getPhoneNumber())
+                .residence(dto.getResidence())
+                .height(dto.getHeight())
+                .weight(dto.getWeight())
+                .licenseImage(dto.getLicenseImage())
+                .career(Career.from(dto.getCareer()))
+                .averageWorking(AverageWorking.from(dto.getAverageWorking()))
+                .averageDelivery(AverageDelivery.from(dto.getAverageDelivery()))
+                .bloodPressure(BloodPressure.from(dto.getBloodPressure()))
+                .approvalStatus(false)
+                .isDeleted(false)
                 .role(Role.USER)
                 .build();
 

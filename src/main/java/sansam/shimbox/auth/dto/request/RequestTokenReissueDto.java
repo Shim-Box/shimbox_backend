@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+@Schema(name = "RequestTokenReissueDto", description = "토큰 재발급 요청 DTO")
 @Getter
 public class RequestTokenReissueDto {
 
