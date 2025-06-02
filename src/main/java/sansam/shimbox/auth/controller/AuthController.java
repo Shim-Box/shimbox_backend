@@ -21,7 +21,6 @@ import sansam.shimbox.global.swagger.ApiErrorCodeExamples;
 
 @RestController
 @RequiredArgsConstructor
-
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
