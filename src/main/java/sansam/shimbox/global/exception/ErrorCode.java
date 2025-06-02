@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     // 400 Bad Request
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    INVALID_ENUM_VALUE(HttpStatus.BAD_REQUEST, "유효하지 않은 ENUM 값입니다."),
 
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),

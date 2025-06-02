@@ -2,6 +2,7 @@ package sansam.shimbox.global.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
         String errorMessage = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .findFirst()
                 .orElse(ErrorCode.INVALID_REQUEST.getMessage());
         return ResponseEntity
