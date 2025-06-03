@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sansam.shimbox.auth.dto.request.RequestAdminSaveDto;
 import sansam.shimbox.auth.dto.request.RequestTokenReissueDto;
 import sansam.shimbox.auth.dto.request.RequestUserLoginDto;
 import sansam.shimbox.auth.dto.request.RequestUserSaveDto;
@@ -38,6 +39,18 @@ public class AuthController {
     public ResponseEntity<BaseResponse<ResponseUserSaveDto>> save(@Valid @RequestBody RequestUserSaveDto dto) {
         ResponseUserSaveDto data = authService.save(dto);
         return ResponseEntity.ok(BaseResponse.success(data,"회원가입 성공", HttpStatus.CREATED));
+    }
+
+    @Operation(summary = "관리자 회원가입 API")
+    @ApiErrorCodeExamples({
+            ErrorCode.INVALID_REQUEST,
+            ErrorCode.EMAIL_ALREADY_EXISTS,
+            ErrorCode.INTERNAL_SERVER_ERROR
+    })
+    @PostMapping("/save/admin")
+    public ResponseEntity<BaseResponse<ResponseUserSaveDto>> saveAdmin(@Valid @RequestBody RequestAdminSaveDto dto) {
+        ResponseUserSaveDto data = authService.saveAdmin(dto);
+        return ResponseEntity.ok(BaseResponse.success(data, "관리자 생성 성공", HttpStatus.CREATED));
     }
 
     @Operation(summary = "로그인 API")
