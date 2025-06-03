@@ -1,6 +1,7 @@
 package sansam.shimbox.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import sansam.shimbox.global.common.BaseResponse;
 import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.global.swagger.ApiErrorCodeExamples;
 
+@Tag(name = "AuthController", description = "로그인/회원가입")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")

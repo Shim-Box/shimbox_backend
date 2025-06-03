@@ -89,4 +89,8 @@ public class User extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Driver driver;
+
+    public void approve() {
+        this.approvalStatus = true;
+    }
 }
