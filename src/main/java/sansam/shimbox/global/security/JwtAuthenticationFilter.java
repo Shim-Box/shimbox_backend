@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 토큰 존재 여부 검증
-        String token = request.getHeader("Authentication");
+        String token = request.getHeader("Authorization");
         if (token == null || !token.startsWith("Bearer ")){
             filterChain.doFilter(request, response);
             return;

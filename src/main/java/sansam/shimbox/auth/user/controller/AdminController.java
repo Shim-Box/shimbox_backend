@@ -26,6 +26,7 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/pending")
     public ResponseEntity<BaseResponse<PagedResponse<ResponseUserFindAllDto>>> userFindAll(RequestPagingDto pagingDto) {
         PagedResponse<ResponseUserFindAllDto> users = adminService.userFindAll(pagingDto);
