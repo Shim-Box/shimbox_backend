@@ -1,13 +1,14 @@
-package sansam.shimbox.auth.user.service;
+package sansam.shimbox.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sansam.shimbox.auth.domain.User;
 import sansam.shimbox.auth.repository.UserRepository;
-import sansam.shimbox.auth.user.dto.request.RequestUserApproveDto;
-import sansam.shimbox.auth.user.dto.response.ResponseUserFindAllDto;
+import sansam.shimbox.user.dto.request.RequestUserApproveDto;
+import sansam.shimbox.user.dto.response.ResponseUserFindAllDto;
 import sansam.shimbox.global.common.PagedResponse;
 import sansam.shimbox.global.common.RequestPagingDto;
 import sansam.shimbox.global.exception.CustomException;
@@ -28,16 +29,21 @@ public class AdminService {
         Page<ResponseUserFindAllDto> dtoPage = usersPage.map(user ->
                 ResponseUserFindAllDto.builder()
                         .id(user.getId())
-                        .email(user.getEmail())
                         .name(user.getName())
+                        .phoneNumber(user.getPhoneNumber())
                         .residence(user.getResidence())
                         .approvalStatus(user.getApprovalStatus())
+                        .birth(user.getBirth())
+                        .career(user.getCareer() != null ? user.getCareer().getLabel() : null)
+                        .averageWorking(user.getAverageWorking() != null ? user.getAverageWorking().getLabel() : null)
+                        .averageDelivery(user.getAverageDelivery() != null ? user.getAverageDelivery().getLabel() : null)
+                        .bloodPressure(user.getBloodPressure() != null ? user.getBloodPressure().getLabel() : null)
                         .build()
         );
 
         return new PagedResponse<>(
                 dtoPage.getContent(),
-                dtoPage.getNumber(),
+                dtoPage.getNumber() + 1, // 1부터 시작
                 dtoPage.getSize(),
                 dtoPage.getTotalElements(),
                 dtoPage.getTotalPages()

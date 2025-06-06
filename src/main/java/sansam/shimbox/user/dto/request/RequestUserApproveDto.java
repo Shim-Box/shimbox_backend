@@ -1,4 +1,4 @@
-package sansam.shimbox.auth.user.dto.request;
+package sansam.shimbox.user.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

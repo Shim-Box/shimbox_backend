@@ -1,4 +1,4 @@
-package sansam.shimbox.auth.user.dto.response;
+package sansam.shimbox.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,8 +10,13 @@ import lombok.Getter;
 public class ResponseUserFindAllDto {
 
     private Long id;
-    private String email;
     private String name;
+    private String phoneNumber;
     private String residence;
     private Boolean approvalStatus;
+    private String birth;
+    private String career;
+    private String averageWorking;
+    private String averageDelivery;
+    private String bloodPressure;
 }

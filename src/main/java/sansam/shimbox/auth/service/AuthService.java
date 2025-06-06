@@ -36,7 +36,7 @@ public class AuthService {
                 .email(dto.getEmail())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
-                .identificationNumber(dto.getIdentificationNumber())
+                .birth(dto.getBirth())
                 .phoneNumber(dto.getPhoneNumber())
                 .residence(dto.getResidence())
                 .height(dto.getHeight())
@@ -66,7 +66,7 @@ public class AuthService {
                 .email(dto.getEmail())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
-                .identificationNumber("0000000") // 임시값
+                .birth("000000") // 임시값
                 .phoneNumber("01000000000") // 임시값
                 .residence("동양미래대학교")
                 .height(0)

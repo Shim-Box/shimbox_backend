@@ -24,10 +24,10 @@ public class RequestUserSaveDto {
     @Size(max = 10, message = "이름은 10자 이내여야 합니다.")
     private String name;
 
-    @Schema(description = "주민등록번호 앞 7자리", example = "9001011")
-    @NotBlank(message = "주민번호는 필수입니다.")
-    @Pattern(regexp = "\\d{7}", message = "주민번호는 숫자 7자리여야 합니다.")
-    private String identificationNumber;
+    @Schema(description = "생년월일", example = "900101")
+    @NotBlank(message = "생년월일은 필수입니다.")
+    @Pattern(regexp = "\\d{6}", message = "생년월일 숫자 6자리여야 합니다.")
+    private String birth;
 
     @Schema(description = "전화번호", example = "01012345678")
     @NotBlank(message = "전화번호는 필수입니다.")
