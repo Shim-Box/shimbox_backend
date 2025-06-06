@@ -22,10 +22,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("""
     SELECT u FROM User u
     JOIN u.driver d
+    JOIN d.driverRealtime dr
     WHERE u.approvalStatus = true
     AND (:residence IS NULL OR u.residence = :residence)
     AND (:attendance IS NULL OR d.attendance = :attendance)
-    AND (:conditionStatus IS NULL OR d.realTimeConditionStatus = :conditionStatus)
+    AND (:conditionStatus IS NULL OR dr.realTimeConditionStatus = :conditionStatus)
     """)
     Page<User> findApprovedUsersWithFilter(
             @Param("residence") String residence,
