@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class ResponseUserFindAllDto {
+public class ResponseUserPendingDto {
 
     private Long id;
     private String name;

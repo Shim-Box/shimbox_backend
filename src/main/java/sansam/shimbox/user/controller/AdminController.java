@@ -1,7 +1,6 @@
 package sansam.shimbox.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +10,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.global.swagger.ApiErrorCodeExamples;
-import sansam.shimbox.user.dto.request.RequestUserApproveDto;
-import sansam.shimbox.user.dto.response.ResponseUserFindAllDto;
+import sansam.shimbox.user.dto.request.RequestUserApprovedDto;
+import sansam.shimbox.user.dto.request.RequestUserStatusDto;
+import sansam.shimbox.user.dto.response.ResponseUserApprovedDto;
+import sansam.shimbox.user.dto.response.ResponseUserPendingDto;
 import sansam.shimbox.user.service.AdminService;
 import sansam.shimbox.global.common.BaseResponse;
 import sansam.shimbox.global.common.PagedResponse;
@@ -36,8 +37,8 @@ public class AdminController {
     })
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/pending")
-    public ResponseEntity<BaseResponse<PagedResponse<ResponseUserFindAllDto>>> userFindAll(@Parameter RequestPagingDto pagingDto) {
-        PagedResponse<ResponseUserFindAllDto> users = adminService.userFindAll(pagingDto);
+    public ResponseEntity<BaseResponse<PagedResponse<ResponseUserPendingDto>>> userFindAll(@RequestParam RequestPagingDto pagingDto) {
+        PagedResponse<ResponseUserPendingDto> users = adminService.userFindAll(pagingDto);
         return ResponseEntity.ok(BaseResponse.success(users, "승인 대기 목록 조회 성공", HttpStatus.OK));
     }
 
@@ -49,9 +50,22 @@ public class AdminController {
             ErrorCode.USERS_NOT_FOUND,
             ErrorCode.INTERNAL_SERVER_ERROR
     })
-    @PatchMapping("/approve")
-    public BaseResponse<List<Long>> approveUser(@Valid @RequestBody RequestUserApproveDto dto) {
+    @PatchMapping("/status")
+    public BaseResponse<List<Long>> approveUser(@Valid @RequestBody RequestUserStatusDto dto) {
         List<Long> approvedIds = adminService.approveUser(dto);
         return BaseResponse.success(approvedIds, "승인 성공", HttpStatus.OK);
+    }
+
+    @Operation(summary = "승인된 회원 목록 조회 API")
+    @ApiErrorCodeExamples({
+            ErrorCode.UNAUTHORIZED,
+            ErrorCode.FORBIDDEN,
+            ErrorCode.INTERNAL_SERVER_ERROR
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/approved")
+    public ResponseEntity<BaseResponse<PagedResponse<ResponseUserApprovedDto>>> approvedUserFindAll(@Valid @RequestParam RequestUserApprovedDto dto) {
+        PagedResponse<ResponseUserApprovedDto> users = adminService.approvedUserFindAll(dto);
+        return ResponseEntity.ok(BaseResponse.success(users, "승인된 회원 목록 조회 성공", HttpStatus.OK));
     }
 }
