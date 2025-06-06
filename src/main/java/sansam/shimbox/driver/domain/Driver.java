@@ -6,9 +6,11 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import sansam.shimbox.auth.domain.User;
 import sansam.shimbox.driver.enums.Attendance;
+import sansam.shimbox.driver.enums.ConditionStatus;
 import sansam.shimbox.global.common.BaseTimeEntity;
 import sansam.shimbox.product.domain.Shipp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,6 +33,9 @@ public class Driver extends BaseTimeEntity {
     @Column(name = "attendance", nullable = false)
     private Attendance attendance = Attendance.BEFORE_WORK;
 
+    @Column(name = "work_start_time")
+    private LocalDateTime workStartTime;
+
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
@@ -40,6 +45,9 @@ public class Driver extends BaseTimeEntity {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DriverRealtime driverRealtime;
 
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
     private List<Shipp> shipps;

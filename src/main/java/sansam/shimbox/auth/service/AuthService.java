@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import sansam.shimbox.auth.domain.User;
+import sansam.shimbox.auth.dto.request.RequestAdminSaveDto;
 import sansam.shimbox.auth.dto.request.RequestTokenReissueDto;
 import sansam.shimbox.auth.dto.request.RequestUserLoginDto;
 import sansam.shimbox.auth.dto.request.RequestUserSaveDto;
@@ -35,7 +36,7 @@ public class AuthService {
                 .email(dto.getEmail())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
-                .identificationNumber(dto.getIdentificationNumber())
+                .birth(dto.getBirth())
                 .phoneNumber(dto.getPhoneNumber())
                 .residence(dto.getResidence())
                 .height(dto.getHeight())
@@ -53,6 +54,34 @@ public class AuthService {
         userRepository.save(user);
 
         return new ResponseUserSaveDto(user.getId(), user.getEmail(), user.getRole().name());
+    }
+
+    @Transactional
+    public ResponseUserSaveDto saveAdmin(RequestAdminSaveDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+
+        User admin = User.builder()
+                .email(dto.getEmail())
+                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
+                .name(dto.getName())
+                .birth("000000") // 임시값
+                .phoneNumber("01000000000") // 임시값
+                .residence("동양미래대학교")
+                .height(0)
+                .weight(0)
+                .licenseImage("admin_default.jpg")
+                .career(Career.EXPERIENCED)
+                .bloodPressure(BloodPressure.NONE)
+                .approvalStatus(true)
+                .isDeleted(false)
+                .role(Role.ADMIN)
+                .build();
+
+        userRepository.save(admin);
+
+        return new ResponseUserSaveDto(admin.getId(), admin.getEmail(), admin.getRole().name());
     }
 
     public TokenDto login(RequestUserLoginDto dto) {

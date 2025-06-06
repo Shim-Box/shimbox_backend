@@ -37,8 +37,8 @@ public class User extends BaseTimeEntity {
     @Column(name = "name", length = 10, nullable = false)
     private String name;
 
-    @Column(name = "identification_number",  length = 7, nullable = false)
-    private String identificationNumber;
+    @Column(name = "identification_number",  length = 6, nullable = false)
+    private String birth;
 
     @Column(name = "phone_number", length = 15, nullable = false)
     private String phoneNumber;
@@ -89,4 +89,8 @@ public class User extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Driver driver;
+
+    public void approve() {
+        this.approvalStatus = true;
+    }
 }

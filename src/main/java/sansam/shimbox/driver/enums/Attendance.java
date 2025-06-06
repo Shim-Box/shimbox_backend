@@ -2,8 +2,10 @@ package sansam.shimbox.driver.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.v3.oas.annotations.media.Schema;
 import sansam.shimbox.global.common.LabelEnum;
 
+@Schema(description = "근무 상태", example = "출근", enumAsRef = true)
 public enum Attendance implements LabelEnum {
 
     BEFORE_WORK("출근전"), WORKING("출근"), OFF_WORK("퇴근");
@@ -12,13 +14,9 @@ public enum Attendance implements LabelEnum {
 
     Attendance(String label) { this.label = label; }
 
-    @JsonValue
+    @Override
+    @JsonValue // JSON 직렬화 시 사용
     public String getLabel() {
         return label;
-    }
-
-    @JsonCreator
-    public static Attendance from(String label) {
-        return LabelEnum.fromLabel(Attendance.class, label);
     }
 }

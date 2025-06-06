@@ -13,7 +13,7 @@ public class RequestUserSaveDto {
     @Email(message = "이메일 형식이 올바르지 않습니다.")
     private String email;
 
-    @Schema(description = "비밀번호", example = "1234")
+    @Schema(description = "비밀번호", example = "12341234")
     @NotBlank(message = "비밀번호는 필수입니다.")
     @Size(min = 8, max = 16, message = "비밀번호는 8자 이상 16자 이하여야 합니다.")
     //@Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
@@ -24,10 +24,10 @@ public class RequestUserSaveDto {
     @Size(max = 10, message = "이름은 10자 이내여야 합니다.")
     private String name;
 
-    @Schema(description = "주민등록번호 앞 7자리", example = "9001011")
-    @NotBlank(message = "주민번호는 필수입니다.")
-    @Pattern(regexp = "\\d{7}", message = "주민번호는 숫자 7자리여야 합니다.")
-    private String identificationNumber;
+    @Schema(description = "생년월일", example = "900101")
+    @NotBlank(message = "생년월일은 필수입니다.")
+    @Pattern(regexp = "\\d{6}", message = "생년월일 숫자 6자리여야 합니다.")
+    private String birth;
 
     @Schema(description = "전화번호", example = "01012345678")
     @NotBlank(message = "전화번호는 필수입니다.")
