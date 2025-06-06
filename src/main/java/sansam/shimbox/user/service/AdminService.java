@@ -1,7 +1,9 @@
 package sansam.shimbox.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sansam.shimbox.auth.domain.User;
@@ -27,6 +29,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminService {
 
     private final UserRepository userRepository;
@@ -48,6 +51,7 @@ public class AdminService {
                         .averageWorking(user.getAverageWorking() != null ? user.getAverageWorking().getLabel() : null)
                         .averageDelivery(user.getAverageDelivery() != null ? user.getAverageDelivery().getLabel() : null)
                         .bloodPressure(user.getBloodPressure() != null ? user.getBloodPressure().getLabel() : null)
+                        .role(String.valueOf(user.getRole()))
                         .build()
         );
 
@@ -94,13 +98,10 @@ public class AdminService {
     }
 
     //승인된 유저 조회
-    public PagedResponse<ResponseUserApprovedDto> approvedUserFindAll(RequestUserApprovedDto dto) {
-        Page<User> usersPage = userRepository.findApprovedUsersWithFilter(
-                dto.getResidence(),
-                dto.getAttendance(),
-                dto.getConditionStatus(),
-                dto.toPageable()
-        );
+    public PagedResponse<ResponseUserApprovedDto> approvedUserFindAll(
+            String residence, Attendance attendance, ConditionStatus conditionStatus, Pageable pageable) {
+
+        Page<User> usersPage = userRepository.findApprovedUsersWithFilter(residence, attendance, conditionStatus, pageable);
 
         Page<ResponseUserApprovedDto> dtoPage = usersPage.map(user -> {
             Driver driver = user.getDriver();
@@ -138,4 +139,5 @@ public class AdminService {
                 dtoPage.getTotalPages()
         );
     }
+
 }

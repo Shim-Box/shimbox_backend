@@ -19,4 +19,5 @@ public class ResponseUserPendingDto {
     private String averageWorking;
     private String averageDelivery;
     private String bloodPressure;
+    private String role;
 }
