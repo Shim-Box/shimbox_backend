@@ -11,6 +11,7 @@ import sansam.shimbox.global.common.BaseTimeEntity;
 import sansam.shimbox.product.domain.Shipp;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,8 +34,8 @@ public class Driver extends BaseTimeEntity {
     @Column(name = "attendance", nullable = false)
     private Attendance attendance = Attendance.BEFORE_WORK;
 
-    @Column(name = "work_start_time")
-    private LocalDateTime workStartTime;
+    @Column(name = "work_time")
+    private LocalDateTime workTime;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
@@ -54,4 +55,23 @@ public class Driver extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
     private List<Health> healthRecords;
+
+    public void assignDriverRealtime(DriverRealtime driverRealtime) {
+        this.driverRealtime = driverRealtime;
+    }
+
+    public void changeAttendanceOnly(Attendance newStatus) {
+        this.attendance = newStatus;
+    }
+
+    public void changeWorkTime(LocalDateTime time) {
+        this.workTime = time;
+    }
+
+    public void updateWorkDuration(LocalDateTime now) {
+        if (this.workTime != null && this.driverRealtime != null) {
+            int minutes = (int) Duration.between(this.workTime, now).toMinutes();
+            this.driverRealtime.updateWorkMinutes(minutes);
+        }
+    }
 }

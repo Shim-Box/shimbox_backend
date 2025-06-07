@@ -6,6 +6,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.global.common.BaseTimeEntity;
+import sansam.shimbox.global.exception.CustomException;
+import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.product.enums.ShippingStatus;
 
 import java.time.LocalDateTime;
@@ -14,7 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "TB_SHIPP")
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE TB_SHIPP SET is_deleted = true, deleted_date = NOW() WHERE shipp_id = ?")
@@ -29,6 +31,9 @@ public class Shipp extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "shipping_status", nullable = false)
     private ShippingStatus shippingStatus = ShippingStatus.WAITING;
+
+    @Column(name = "delivery_image_url")
+    private String deliveryImageUrl;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;

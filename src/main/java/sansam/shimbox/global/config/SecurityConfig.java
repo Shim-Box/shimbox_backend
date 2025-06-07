@@ -56,6 +56,7 @@ public class SecurityConfig {
                                 ).permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/driver/**").hasRole("USER")
                         .anyRequest().authenticated()
                 );
         // 커스텀 필터 등록

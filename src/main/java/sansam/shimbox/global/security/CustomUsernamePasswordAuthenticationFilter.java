@@ -61,8 +61,8 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 
         // 토큰 생성
         CustomUserDetails userDetails = (CustomUserDetails) authResult.getPrincipal();
-        String accessToken = jwtUtil.createAccessToken(userDetails.getUser().getEmail(), userDetails.getUser().getRole().name());
-        String refreshToken = jwtUtil.createRefreshToken(userDetails.getUser().getEmail(), userDetails.getUser().getRole().name());
+        String accessToken = jwtUtil.createAccessToken(userDetails.getUser().getEmail(), userDetails.getUser().getRole().name(), userDetails.getUser().getId());
+        String refreshToken = jwtUtil.createRefreshToken(userDetails.getUser().getEmail(), userDetails.getUser().getRole().name(), userDetails.getUser().getId());
 
         // 토큰을 JSON 형태로 변경
         TokenDto tokenDto = new TokenDto(accessToken, refreshToken);

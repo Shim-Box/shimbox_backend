@@ -49,8 +49,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 임시 세션 추가
         String email = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
+        Long userId = jwtUtil.getUserId(token);
 
         User user = User.builder()
+                .id(userId)
                 .email(email)
                 .password("")
                 .role(Role.valueOf(role))

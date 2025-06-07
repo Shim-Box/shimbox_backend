@@ -92,8 +92,8 @@ public class AuthService {
             throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        String accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole().name());
-        String refreshToken = jwtUtil.createRefreshToken(user.getEmail(), user.getRole().name());
+        String accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole().name(), user.getId());
+        String refreshToken = jwtUtil.createRefreshToken(user.getEmail(), user.getRole().name(), user.getId());
 
         redisService.deleteRefreshToken(user.getId());
         redisService.saveRefreshToken(user.getId(), refreshToken, jwtUtil.getRefreshTokenExpirationMillis());
@@ -114,7 +114,7 @@ public class AuthService {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        String newAccessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole().name());
+        String newAccessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole().name(), user.getId());
         return new TokenDto(newAccessToken, dto.getRefreshToken());
     }
 }
