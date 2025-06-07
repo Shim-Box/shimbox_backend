@@ -46,4 +46,20 @@ public class DriverRealtime {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public static DriverRealtime createNew(Driver driver) {
+        return DriverRealtime.builder()
+                .driver(driver)
+                .realTimeConditionStatus(ConditionStatus.GOOD)
+                .realTimeWorkMinutes(0)
+                .realTimeDeliveryCount(0)
+                .realTimeHeartRate(0)
+                .realTimeFatigue(BigDecimal.ZERO)
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
+    public void updateWorkMinutes(int minutes) {
+        this.realTimeWorkMinutes = minutes;
+    }
 }

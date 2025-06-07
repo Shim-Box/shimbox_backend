@@ -68,4 +68,8 @@ public class Health extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "driver_id", nullable = false)
     private Driver driver;
+
+    public void markLeaveTime(LocalDateTime leaveTime) {
+        this.leaveWorkTime = leaveTime;
+    }
 }

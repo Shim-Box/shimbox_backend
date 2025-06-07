@@ -14,13 +14,9 @@ public enum ShippingStatus implements LabelEnum {
         this.label = label;
     }
 
+    @Override
     @JsonValue
     public String getLabel() {
         return label;
-    }
-
-    @JsonCreator
-    public static ShippingStatus from(String label) {
-        return LabelEnum.fromLabel(ShippingStatus.class, label);
     }
 }

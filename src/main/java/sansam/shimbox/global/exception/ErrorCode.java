@@ -7,9 +7,16 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
+
     // 400 Bad Request
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_ENUM_VALUE(HttpStatus.BAD_REQUEST, "유효하지 않은 ENUM 값입니다."),
+    INVALID_ATTENDANCE_STATUS(HttpStatus.BAD_REQUEST, "올바르지 않은 출근 상태입니다."),
+    ALREADY_IN_SAME_STATUS(HttpStatus.BAD_REQUEST, "이미 같은 상태입니다."),
+    INVALID_ATTENDANCE_TRANSITION(HttpStatus.BAD_REQUEST,"현재 상태에서는 해당 상태로 전환할 수 없습니다."),
+    INVALID_ATTENDANCE_CHANGE(HttpStatus.BAD_REQUEST, "출근/퇴근 상태 전환이 유효하지 않습니다."),
+    INVALID_SHIPPING_TRANSITION(HttpStatus.BAD_REQUEST, "배송 상태 전환이 유효하지 않습니다."),
+    ALREADY_UPLOADED_IMAGE(HttpStatus.BAD_REQUEST, "이미 이미지가 업로드된 상품입니다."),
 
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),
@@ -23,6 +30,11 @@ public enum ErrorCode {
     // 404 Not Found
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     USERS_NOT_FOUND(HttpStatus.NOT_FOUND, "일부 유저를 찾을 수 없습니다."),
+    DRIVER_NOT_FOUND(HttpStatus.NOT_FOUND, "기사 정보를 찾을 수 없습니다."),
+    HEALTH_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 드라이버의 건강 기록이 존재하지 않습니다."),
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "배정받은 상품이 없습니다."),
+    SHIPP_NOT_FOUND(HttpStatus.NOT_FOUND, "배송 정보가 존재하지 않습니다."),
 
     // 409 Conflict
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),

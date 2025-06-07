@@ -85,7 +85,7 @@ public class AdminService {
                     Driver driver = Driver.builder()
                             .user(user)
                             .attendance(Attendance.BEFORE_WORK)
-                            .workStartTime(null)
+                            .workTime(null)
                             .isDeleted(false)
                             .build();
 
@@ -111,8 +111,8 @@ public class AdminService {
 
             String workTime = "-";
             if (driver != null && driver.getDriverRealtime() != null && driver.getDriverRealtime().getRealTimeWorkMinutes() != null
-                    && driver.getWorkStartTime() != null) {
-                LocalDateTime startTime = driver.getWorkStartTime();
+                    && driver.getWorkTime() != null) {
+                LocalDateTime startTime = driver.getWorkTime();
                 LocalDateTime endTime = startTime.plusMinutes(driver.getDriverRealtime().getRealTimeWorkMinutes());
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm").withLocale(java.util.Locale.KOREA);
                 workTime = startTime.format(formatter) + " - " + endTime.format(formatter);
