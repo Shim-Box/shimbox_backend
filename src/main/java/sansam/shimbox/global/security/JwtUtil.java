@@ -29,7 +29,7 @@ public class JwtUtil {
     }
 
     public String createAccessToken(String email, String role) {
-        return createJwt(email, role, refreshTokenExpirationMs);
+        return createJwt(email, role, accessTokenExpirationMs);
     }
 
     public String createRefreshToken(String email, String role) {

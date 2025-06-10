@@ -1,6 +1,7 @@
 package sansam.shimbox.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sansam.shimbox.auth.dto.request.RequestAdminSaveDto;
 import sansam.shimbox.auth.dto.request.RequestTokenReissueDto;
 import sansam.shimbox.auth.dto.request.RequestUserLoginDto;
 import sansam.shimbox.auth.dto.request.RequestUserSaveDto;
@@ -19,9 +21,9 @@ import sansam.shimbox.global.common.BaseResponse;
 import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.global.swagger.ApiErrorCodeExamples;
 
+@Tag(name = "AuthController", description = "로그인/회원가입")
 @RestController
 @RequiredArgsConstructor
-
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
@@ -37,6 +39,18 @@ public class AuthController {
     public ResponseEntity<BaseResponse<ResponseUserSaveDto>> save(@Valid @RequestBody RequestUserSaveDto dto) {
         ResponseUserSaveDto data = authService.save(dto);
         return ResponseEntity.ok(BaseResponse.success(data,"회원가입 성공", HttpStatus.CREATED));
+    }
+
+    @Operation(summary = "관리자 회원가입 API")
+    @ApiErrorCodeExamples({
+            ErrorCode.INVALID_REQUEST,
+            ErrorCode.EMAIL_ALREADY_EXISTS,
+            ErrorCode.INTERNAL_SERVER_ERROR
+    })
+    @PostMapping("/save/admin")
+    public ResponseEntity<BaseResponse<ResponseUserSaveDto>> saveAdmin(@Valid @RequestBody RequestAdminSaveDto dto) {
+        ResponseUserSaveDto data = authService.saveAdmin(dto);
+        return ResponseEntity.ok(BaseResponse.success(data, "관리자 생성 성공", HttpStatus.CREATED));
     }
 
     @Operation(summary = "로그인 API")
