@@ -35,7 +35,7 @@ springdoc:
     enabled: false
 
 server:
-  port: 8080
+  port: 8000
   error:
     include-message: always
 
