@@ -11,6 +11,8 @@ public enum ErrorCode {
     // 400 Bad Request
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_ENUM_VALUE(HttpStatus.BAD_REQUEST, "유효하지 않은 ENUM 값입니다."),
+    CAREER_DETAILS_SHOULD_BE_NULL(HttpStatus.BAD_REQUEST, "초보자의 근무/배송 경력은 입력할 수 없습니다."),
+    CAREER_DETAILS_REQUIRED(HttpStatus.BAD_REQUEST, "경력자일 경우 근무/배송 경력은 필수입니다."),
     INVALID_ATTENDANCE_STATUS(HttpStatus.BAD_REQUEST, "올바르지 않은 출근 상태입니다."),
     ALREADY_IN_SAME_STATUS(HttpStatus.BAD_REQUEST, "이미 같은 상태입니다."),
     INVALID_ATTENDANCE_TRANSITION(HttpStatus.BAD_REQUEST,"현재 상태에서는 해당 상태로 전환할 수 없습니다."),

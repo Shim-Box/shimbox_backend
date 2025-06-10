@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -28,14 +28,8 @@ spring:
     accessTokenExpiration: ${JWT_ACCESS_EXP}
     refreshTokenExpiration: ${JWT_REFRESH_EXP}
 
-springdoc:
-  swagger-ui:
-    path: /api-docs
-  api-docs:
-    path: /api
-
 server:
-  port: 8080
+  port: 8000
   error:
     include-message: always
 

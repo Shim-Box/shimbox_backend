@@ -32,6 +32,19 @@ public class AuthService {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
+
+        Career career = dto.getCareer();
+
+        if (career.isBeginner()) {
+            if (dto.getAverageWorking() != null || dto.getAverageDelivery() != null) {
+                throw new CustomException(ErrorCode.CAREER_DETAILS_SHOULD_BE_NULL);
+            }
+        } else {
+            if (dto.getAverageWorking() == null || dto.getAverageDelivery() == null) {
+                throw new CustomException(ErrorCode.CAREER_DETAILS_REQUIRED);
+            }
+        }
+
         User user = User.builder()
                 .email(dto.getEmail())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
@@ -42,10 +55,10 @@ public class AuthService {
                 .height(dto.getHeight())
                 .weight(dto.getWeight())
                 .licenseImage(dto.getLicenseImage())
-                .career(Career.from(dto.getCareer()))
-                .averageWorking(AverageWorking.from(dto.getAverageWorking()))
-                .averageDelivery(AverageDelivery.from(dto.getAverageDelivery()))
-                .bloodPressure(BloodPressure.from(dto.getBloodPressure()))
+                .career(dto.getCareer())
+                .averageWorking(dto.getAverageWorking())
+                .averageDelivery(dto.getAverageDelivery())
+                .bloodPressure(dto.getBloodPressure())
                 .approvalStatus(false)
                 .isDeleted(false)
                 .role(Role.USER)

@@ -19,4 +19,9 @@ public enum Attendance implements LabelEnum {
     public String getLabel() {
         return label;
     }
+
+    @JsonCreator
+    public static Attendance from(String label) {
+        return LabelEnum.fromLabel(Attendance.class, label);
+    }
 }

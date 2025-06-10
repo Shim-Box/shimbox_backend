@@ -3,6 +3,10 @@ package sansam.shimbox.auth.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
+import sansam.shimbox.auth.enums.AverageDelivery;
+import sansam.shimbox.auth.enums.AverageWorking;
+import sansam.shimbox.auth.enums.BloodPressure;
+import sansam.shimbox.auth.enums.Career;
 
 @Schema(name = "RequestUserSaveDto", description = "회원가입 요청 DTO")
 @Getter
@@ -52,16 +56,16 @@ public class RequestUserSaveDto {
 
 
     @Schema(description = "경력", example = "경력자", allowableValues = {"초보자", "경력자", "숙련자"})
-    @NotBlank(message = "경력은 필수입니다.")
-    private String career;
+    @NotNull(message = "경력은 필수입니다.")
+    private Career career;
 
     @Schema(description = "평균 근무 시간", example = "4~6시간", allowableValues = {"4~6시간", "6~8시간", "8시간 이상"})
-    private String averageWorking;
+    private AverageWorking averageWorking;
 
     @Schema(description = "평균 배달 건수", example = "201~300건", allowableValues = {"100건 이하", "101~200건", "201~300건", "300건 이상"})
-    private String averageDelivery;
+    private AverageDelivery averageDelivery;
 
     @Schema(description = "혈압 상태", example = "없음", allowableValues = {"고혈압", "저혈압", "없음"})
-    @NotBlank(message = "건강 상태는 필수입니다.")
-    private String bloodPressure;
+    @NotNull(message = "건강 상태는 필수입니다.")
+    private BloodPressure bloodPressure;
 }

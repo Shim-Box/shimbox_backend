@@ -21,4 +21,9 @@ public enum ConditionStatus implements LabelEnum {
     public String getLabel() {
         return label;
     }
+
+    @JsonCreator
+    public static ConditionStatus from(String label) {
+        return LabelEnum.fromLabel(ConditionStatus.class, label);
+    }
 }

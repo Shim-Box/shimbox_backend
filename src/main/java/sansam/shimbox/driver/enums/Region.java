@@ -1,5 +1,6 @@
 package sansam.shimbox.driver.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import sansam.shimbox.global.common.LabelEnum;
@@ -41,5 +42,10 @@ public enum Region implements LabelEnum {
     @JsonValue
     public String getLabel() {
         return label;
+    }
+
+    @JsonCreator
+    public static Region from(String label) {
+        return LabelEnum.fromLabel(Region.class, label);
     }
 }

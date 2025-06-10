@@ -33,8 +33,8 @@ public class Product extends BaseTimeEntity {
     @Column(name = "product_name", length = 100, nullable = false)
     private String productName;
 
-    @Column(name = "product_weight", precision = 5, scale = 2, nullable = false)
-    private BigDecimal productWeight;
+    @Column(name = "product_weight", nullable = false)
+    private Integer productWeight;
 
     @Column(name = "recipient_name", length = 50, nullable = false)
     private String recipientName;
