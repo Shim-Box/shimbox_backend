@@ -52,9 +52,6 @@ public class Health extends BaseTimeEntity {
     @Column(name = "heart_rate")
     private Integer heartRate;
 
-    @Column(name = "fatigue", precision = 3, scale = 2)
-    private BigDecimal fatigue;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "contition_status")
     private ConditionStatus conditionStatus;

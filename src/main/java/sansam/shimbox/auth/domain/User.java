@@ -93,4 +93,8 @@ public class User extends BaseTimeEntity {
     public void approve() {
         this.approvalStatus = true;
     }
+
+    public void updateProfileImage(String imageUrl) {
+        this.profileImage = imageUrl;
+    }
 }

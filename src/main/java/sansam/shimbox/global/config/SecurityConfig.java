@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 import sansam.shimbox.global.security.CustomUsernamePasswordAuthenticationFilter;
 import sansam.shimbox.global.security.JwtUtil;
 import sansam.shimbox.global.security.JwtAuthenticationFilter;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     // authManager Bean을 얻기 위한 authConfiguration 객체
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -42,6 +44,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF Disable
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)  // Session login disable
                 .formLogin(AbstractHttpConfigurer::disable)  // UsernamePasswordAuthenticationFilter disable
                 .httpBasic(AbstractHttpConfigurer::disable)   // 기본 로그인창 disable
