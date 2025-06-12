@@ -9,6 +9,7 @@ import sansam.shimbox.auth.dto.request.RequestAdminSaveDto;
 import sansam.shimbox.auth.dto.request.RequestTokenReissueDto;
 import sansam.shimbox.auth.dto.request.RequestUserLoginDto;
 import sansam.shimbox.auth.dto.request.RequestUserSaveDto;
+import sansam.shimbox.auth.dto.response.ResponseLoginDto;
 import sansam.shimbox.auth.dto.response.TokenDto;
 import sansam.shimbox.auth.dto.response.ResponseUserSaveDto;
 import sansam.shimbox.auth.enums.*;
@@ -97,7 +98,7 @@ public class AuthService {
         return new ResponseUserSaveDto(admin.getId(), admin.getEmail(), admin.getRole().name());
     }
 
-    public TokenDto login(RequestUserLoginDto dto) {
+    public ResponseLoginDto login(RequestUserLoginDto dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -111,7 +112,7 @@ public class AuthService {
         redisService.deleteRefreshToken(user.getId());
         redisService.saveRefreshToken(user.getId(), refreshToken, jwtUtil.getRefreshTokenExpirationMillis());
 
-        return new TokenDto(accessToken, refreshToken);
+        return new ResponseLoginDto(user.getName(), accessToken, refreshToken);
     }
 
     public TokenDto reissueAccessToken(RequestTokenReissueDto dto) {

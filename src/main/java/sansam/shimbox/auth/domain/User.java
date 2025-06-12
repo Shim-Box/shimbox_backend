@@ -1,10 +1,7 @@
 package sansam.shimbox.auth.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import sansam.shimbox.auth.enums.*;
@@ -87,6 +84,7 @@ public class User extends BaseTimeEntity {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @Setter
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Driver driver;
 

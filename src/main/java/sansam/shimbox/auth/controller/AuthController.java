@@ -14,6 +14,7 @@ import sansam.shimbox.auth.dto.request.RequestAdminSaveDto;
 import sansam.shimbox.auth.dto.request.RequestTokenReissueDto;
 import sansam.shimbox.auth.dto.request.RequestUserLoginDto;
 import sansam.shimbox.auth.dto.request.RequestUserSaveDto;
+import sansam.shimbox.auth.dto.response.ResponseLoginDto;
 import sansam.shimbox.auth.dto.response.TokenDto;
 import sansam.shimbox.auth.dto.response.ResponseUserSaveDto;
 import sansam.shimbox.auth.service.AuthService;
@@ -60,9 +61,9 @@ public class AuthController {
             ErrorCode.INTERNAL_SERVER_ERROR
     })
     @PostMapping("/login")
-    public ResponseEntity<BaseResponse<TokenDto>> login(@Valid @RequestBody RequestUserLoginDto dto) {
-        TokenDto tokenDto = authService.login(dto);
-        return ResponseEntity.ok(BaseResponse.success(tokenDto, "로그인 성공", HttpStatus.OK));
+    public ResponseEntity<BaseResponse<ResponseLoginDto>> login(@Valid @RequestBody RequestUserLoginDto dto) {
+        ResponseLoginDto loginDto = authService.login(dto);
+        return ResponseEntity.ok(BaseResponse.success(loginDto, "로그인 성공", HttpStatus.OK));
     }
 
     @Operation(summary = "토큰 재발급 API")

@@ -35,7 +35,7 @@ public class AdminService {
     private final UserRepository userRepository;
     private final DriverRepository driverRepository;
 
-    //신청 유저 조회
+    //가입 대기자 조회
     public PagedResponse<ResponseUserPendingDto> userFindAll(RequestPagingDto pagingDto) {
         Page<User> usersPage = userRepository.findAllByApprovalStatusFalse(pagingDto.toPageable());
 
@@ -45,6 +45,7 @@ public class AdminService {
                         .name(user.getName())
                         .phoneNumber(user.getPhoneNumber())
                         .residence(user.getResidence())
+                        .licenseImage(user.getLicenseImage())
                         .approvalStatus(user.getApprovalStatus())
                         .birth(user.getBirth())
                         .career(user.getCareer() != null ? user.getCareer().getLabel() : null)
@@ -88,6 +89,8 @@ public class AdminService {
                             .workTime(null)
                             .isDeleted(false)
                             .build();
+
+                    user.setDriver(driver);
 
                     driverRepository.save(driver);
                 }

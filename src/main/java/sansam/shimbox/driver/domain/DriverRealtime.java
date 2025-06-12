@@ -41,9 +41,6 @@ public class DriverRealtime {
     @Column(name = "real_time_heart_rate")
     private Integer realTimeHeartRate;
 
-    @Column(name = "real_time_fatigue")
-    private BigDecimal realTimeFatigue;
-
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -54,7 +51,6 @@ public class DriverRealtime {
                 .realTimeWorkMinutes(0)
                 .realTimeDeliveryCount(0)
                 .realTimeHeartRate(0)
-                .realTimeFatigue(BigDecimal.ZERO)
                 .updatedAt(LocalDateTime.now())
                 .build();
     }

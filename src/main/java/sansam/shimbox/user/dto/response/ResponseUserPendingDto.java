@@ -13,6 +13,7 @@ public class ResponseUserPendingDto {
     private String name;
     private String phoneNumber;
     private String residence;
+    private String licenseImage;
     private Boolean approvalStatus;
     private String birth;
     private String career;
