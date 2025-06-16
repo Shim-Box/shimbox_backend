@@ -8,31 +8,28 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sansam.shimbox.auth.domain.User;
 import sansam.shimbox.driver.enums.Attendance;
-import sansam.shimbox.driver.enums.ConditionStatus;
 
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+
     boolean existsByEmail(String email);
 
     Page<User> findAllByApprovalStatusFalse(Pageable pageable);
 
     @Query("""
-        SELECT u FROM User u
-        JOIN u.driver d
-        LEFT JOIN d.driverRealtime dr
-        WHERE u.approvalStatus = true
-            AND u.role = 'USER'
-            AND (:residence IS NULL OR :residence = '' OR u.residence = :residence)
-            AND (:attendance IS NULL OR d.attendance = :attendance)
-            AND (:conditionStatus IS NULL OR dr.realTimeConditionStatus = :conditionStatus)
-    """)
-    Page<User> findApprovedUsersWithFilter(
+    SELECT u FROM User u
+    JOIN u.driver d
+    WHERE u.approvalStatus = true
+    AND u.role = 'USER'
+    AND (:residence IS NULL OR u.residence LIKE %:residence%)
+    AND (:attendance IS NULL OR d.attendance = :attendance)
+""")
+    Page<User> findApprovedUsersWithFilterWithoutConditionStatus(
             @Param("residence") String residence,
             @Param("attendance") Attendance attendance,
-            @Param("conditionStatus") ConditionStatus conditionStatus,
             Pageable pageable
     );
 }

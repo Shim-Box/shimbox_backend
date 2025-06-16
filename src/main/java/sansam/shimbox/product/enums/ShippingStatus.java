@@ -2,6 +2,7 @@ package sansam.shimbox.product.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import sansam.shimbox.driver.enums.Finish1;
 import sansam.shimbox.global.common.LabelEnum;
 
 public enum ShippingStatus implements LabelEnum {
@@ -18,5 +19,14 @@ public enum ShippingStatus implements LabelEnum {
     @JsonValue
     public String getLabel() {
         return label;
+    }
+
+    @JsonCreator
+    public static ShippingStatus from(String label) {
+        return LabelEnum.fromLabel(ShippingStatus.class, label);
+    }
+
+    public boolean isCompleted() {
+        return this == COMPLETED;
     }
 }

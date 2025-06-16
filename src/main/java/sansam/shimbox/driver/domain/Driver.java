@@ -6,11 +6,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import sansam.shimbox.auth.domain.User;
 import sansam.shimbox.driver.enums.Attendance;
-import sansam.shimbox.driver.enums.ConditionStatus;
 import sansam.shimbox.global.common.BaseTimeEntity;
-import sansam.shimbox.product.domain.Shipp;
+import sansam.shimbox.product.domain.Product;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,18 +45,11 @@ public class Driver extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL, orphanRemoval = true)
-    private DriverRealtime driverRealtime;
-
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
-    private List<Shipp> shipps;
+    private List<Product> products;
 
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
     private List<Health> healthRecords;
-
-    public void assignDriverRealtime(DriverRealtime driverRealtime) {
-        this.driverRealtime = driverRealtime;
-    }
 
     public void changeAttendanceOnly(Attendance newStatus) {
         this.attendance = newStatus;
@@ -66,12 +57,5 @@ public class Driver extends BaseTimeEntity {
 
     public void changeWorkTime(LocalDateTime time) {
         this.workTime = time;
-    }
-
-    public void updateWorkDuration(LocalDateTime now) {
-        if (this.workTime != null && this.driverRealtime != null) {
-            int minutes = (int) Duration.between(this.workTime, now).toMinutes();
-            this.driverRealtime.updateWorkMinutes(minutes);
-        }
     }
 }

@@ -1,4 +1,4 @@
-package sansam.shimbox.driver.dto.response;
+package sansam.shimbox.driver.dto.response.record;
 
 public record DeliveryLocationSummaryDto(
         String shippingLocation,

@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.global.common.BaseTimeEntity;
+import sansam.shimbox.product.enums.ShippingStatus;
 
 import java.time.LocalDateTime;
 
@@ -42,11 +44,12 @@ public class Product extends BaseTimeEntity {
     @Column(name = "postal_code", length = 10, nullable = false)
     private String postalCode;
 
-    @Column(name = "shipping_location", nullable = false)
-    private String shippingLocation;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "shipping_status", nullable = false)
+    private ShippingStatus shippingStatus;
 
-    @Column(name = "estimated_arrival_time", nullable = false)
-    private LocalDateTime estimatedArrivalTime;
+    @Column(name = "delivery_image_url")
+    private String deliveryImageUrl;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
@@ -54,6 +57,7 @@ public class Product extends BaseTimeEntity {
     @Column(name = "delete_date")
     private LocalDateTime deleteDate;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Shipp shipp;
+    @ManyToOne
+    @JoinColumn(name = "driver_id", nullable = false)
+    private Driver driver;
 }

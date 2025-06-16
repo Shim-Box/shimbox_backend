@@ -14,7 +14,8 @@ import sansam.shimbox.driver.enums.ConditionStatus;
 @Builder
 public class ResponseUserApprovedDto {
 
-    private Long id;
+    private Long userId;
+    private Long driverId;
     private String name;
     private Boolean approvalStatus;
     private String profileImageUrl;

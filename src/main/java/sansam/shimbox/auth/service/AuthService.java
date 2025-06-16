@@ -112,7 +112,7 @@ public class AuthService {
         redisService.deleteRefreshToken(user.getId());
         redisService.saveRefreshToken(user.getId(), refreshToken, jwtUtil.getRefreshTokenExpirationMillis());
 
-        return new ResponseLoginDto(user.getName(), accessToken, refreshToken);
+        return new ResponseLoginDto(user.getName(), user.getApprovalStatus(),accessToken, refreshToken);
     }
 
     public TokenDto reissueAccessToken(RequestTokenReissueDto dto) {

@@ -69,4 +69,17 @@ public class Health extends BaseTimeEntity {
     public void markLeaveTime(LocalDateTime leaveTime) {
         this.leaveWorkTime = leaveTime;
     }
+
+    public void markOffWork(LocalDateTime leaveWorkTime, Finish1 f1, Finish2 f2, Finish3 f3) {
+        this.leaveWorkTime = leaveWorkTime;
+        this.finish1 = f1;
+        this.finish2 = f2;
+        this.finish3 = f3;
+    }
+
+    public void updateRealtimeMetrics(int step, int heartRate, ConditionStatus status) {
+        this.step = step;
+        this.heartRate = heartRate;
+        this.conditionStatus = status;
+    }
 }

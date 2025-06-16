@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface HealthRepository extends JpaRepository<Health, Integer> {
     Optional<Health> findTopByDriverOrderByCreatedDateDesc(Driver driver);
+    Optional<Health> findTopByDriverAndLeaveWorkTimeIsNotNullOrderByLeaveWorkTimeDesc(Driver driver);
 }

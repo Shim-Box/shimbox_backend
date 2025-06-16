@@ -1,6 +1,4 @@
-package sansam.shimbox.driver.dto.response;
-
-import sansam.shimbox.product.dto.ProductDto;
+package sansam.shimbox.driver.dto.response.record;
 
 import java.util.List;
 

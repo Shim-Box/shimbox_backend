@@ -42,7 +42,10 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
 
     // 500 Internal Server Error
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
+    REDIS_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 저장에 실패했습니다."),
+    REDIS_PARSE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 데이터 역직렬화에 실패했습니다."),
+    REDIS_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 데이터를 삭제하는데 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

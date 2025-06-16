@@ -1,5 +1,6 @@
 package sansam.shimbox.user.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.driver.enums.Attendance;
 import sansam.shimbox.driver.enums.ConditionStatus;
 import sansam.shimbox.driver.repository.DriverRepository;
+import sansam.shimbox.global.redis.RedisService;
 import sansam.shimbox.user.dto.request.RequestUserApprovedDto;
 import sansam.shimbox.user.dto.request.RequestUserStatusDto;
 import sansam.shimbox.user.dto.response.ResponseUserApprovedDto;
@@ -26,6 +28,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +39,7 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final DriverRepository driverRepository;
+    private final RedisService redisService;
 
     //가입 대기자 조회
     public PagedResponse<ResponseUserPendingDto> userFindAll(RequestPagingDto pagingDto) {
@@ -104,46 +110,51 @@ public class AdminService {
     public PagedResponse<ResponseUserApprovedDto> approvedUserFindAll(
             String residence, Attendance attendance, ConditionStatus conditionStatus, Pageable pageable) {
 
-        Page<User> usersPage = userRepository.findApprovedUsersWithFilter(residence, attendance, conditionStatus, pageable);
+        Page<User> usersPage = userRepository.findApprovedUsersWithFilterWithoutConditionStatus(residence, attendance, pageable);
 
-        Page<ResponseUserApprovedDto> dtoPage = usersPage.map(user -> {
-            Driver driver = user.getDriver();
-            int deliveries = driver != null && driver.getDriverRealtime() != null && driver.getDriverRealtime().getRealTimeDeliveryCount() != null
-                    ? driver.getDriverRealtime().getRealTimeDeliveryCount() : 0;
-            int deliveryTarget = driver != null && driver.getShipps() != null ? driver.getShipps().size() : 0;
+        List<ResponseUserApprovedDto> filteredList = usersPage.getContent().stream()
+                .map(user -> {
+                    Driver driver = user.getDriver();
 
-            String workTime = "-";
-            if (driver != null && driver.getDriverRealtime() != null && driver.getDriverRealtime().getRealTimeWorkMinutes() != null
-                    && driver.getWorkTime() != null) {
-                LocalDateTime startTime = driver.getWorkTime();
-                LocalDateTime endTime = startTime.plusMinutes(driver.getDriverRealtime().getRealTimeWorkMinutes());
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm").withLocale(java.util.Locale.KOREA);
-                workTime = startTime.format(formatter) + " - " + endTime.format(formatter);
-            }
+                    String workTime = "-";
+                    if (driver != null && driver.getWorkTime() != null) {
+                        LocalDateTime startTime = driver.getWorkTime();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a hh:mm").withLocale(Locale.KOREA);
+                        workTime = startTime.format(formatter);
+                    }
 
-            return ResponseUserApprovedDto.builder()
-                    .id(user.getId())
-                    .approvalStatus(user.getApprovalStatus())
-                    .profileImageUrl(user.getProfileImage())
-                    .averageDelivery(user.getAverageDelivery())
-                    .averageWorking(user.getAverageWorking())
-                    .career(user.getCareer())
-                    .name(user.getName())
-                    .attendance(driver != null ? driver.getAttendance() : null)
-                    .residence(user.getResidence())
-                    .workTime(workTime)
-                    .deliveryStats(deliveries + " / " + deliveryTarget)
-                    .conditionStatus(driver != null && driver.getDriverRealtime() != null ? driver.getDriverRealtime().getRealTimeConditionStatus() : null)
-                    .build();
-        });
+                    int deliveries = driver != null && driver.getProducts() != null ?
+                            (int) driver.getProducts().stream().filter(p -> p.getShippingStatus().isCompleted()).count() : 0;
+
+                    int deliveryTarget = driver != null && driver.getProducts() != null ? driver.getProducts().size() : 0;
+
+                    ConditionStatus realtimeStatus = driver != null ? redisService.getDriverConditionStatus(driver.getDriverId()) : null;
+
+                    return ResponseUserApprovedDto.builder()
+                            .userId(user.getId())
+                            .driverId(driver.getDriverId())
+                            .approvalStatus(user.getApprovalStatus())
+                            .profileImageUrl(user.getProfileImage())
+                            .averageDelivery(user.getAverageDelivery())
+                            .averageWorking(user.getAverageWorking())
+                            .career(user.getCareer())
+                            .name(user.getName())
+                            .attendance(driver.getAttendance())
+                            .residence(user.getResidence())
+                            .workTime(workTime)
+                            .deliveryStats(deliveries + " / " + deliveryTarget)
+                            .conditionStatus(realtimeStatus)
+                            .build();
+                })
+                .filter(dto -> conditionStatus == null || conditionStatus.equals(dto.getConditionStatus()))
+                .collect(Collectors.toList());
 
         return new PagedResponse<>(
-                dtoPage.getContent(),
-                dtoPage.getNumber() + 1,
-                dtoPage.getSize(),
-                dtoPage.getTotalElements(),
-                dtoPage.getTotalPages()
+                filteredList,
+                usersPage.getNumber() + 1,
+                usersPage.getSize(),
+                filteredList.size(),
+                (int) Math.ceil((double) filteredList.size() / usersPage.getSize())
         );
     }
-
 }

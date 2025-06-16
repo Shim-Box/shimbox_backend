@@ -10,6 +10,11 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("SELECT p FROM Product p JOIN p.shipp s WHERE s.driver.driverId = :driverId AND DATE(p.estimatedArrivalTime) = CURRENT_DATE AND p.isDeleted = false")
-    List<Product> findAllByDriverAndToday(@Param("driverId") Long driverId);
+
+
+    @Query("SELECT p FROM Product p WHERE p.isDeleted = false AND p.driver.user.id = :userId")
+    List<Product> findActiveProductsByDriverId(@Param("userId") Long userId);
+
+    @Query("SELECT p FROM Product p WHERE p.isDeleted = false AND p.driver.user.id = :userId")
+    List<Product> findActiveProductsByDriverUserId(@Param("userId") Long userId);
 }

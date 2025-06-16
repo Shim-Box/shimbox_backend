@@ -10,6 +10,5 @@ public record ProductDto(
         String recipientName,
         String address,
         String detailAddress,
-        LocalDateTime estimatedArrivalTime,
         ShippingStatus shippingStatus
 ) {}
