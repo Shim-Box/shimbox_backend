@@ -58,9 +58,10 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                                 ).permitAll()
+                        .requestMatchers("/api/v1/mock/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/driver/**").hasRole("USER")
+                        .requestMatchers("/api/v1/admin/**", "/api/v1/product/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/driver/**").hasAnyRole("ADMIN","USER")
                         .anyRequest().authenticated()
                 );
         // 커스텀 필터 등록

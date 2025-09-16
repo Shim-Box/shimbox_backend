@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import sansam.shimbox.auth.repository.UserRepository;
 import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.driver.dto.request.RequestRealTimeHealthSaveDto;
 import sansam.shimbox.driver.dto.response.ResponseRealTimeHealthDto;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class RealtimeHealthService {
 
     private final DriverRepository driverRepository;
+    private final UserRepository userRepository;
     private final RedisService redisService;
     private final ObjectMapper objectMapper;
 
@@ -110,5 +112,11 @@ public class RealtimeHealthService {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isAdmin(Long userId) {
+        return userRepository.findById(userId)
+                .map(user -> user.getRole().name().equals("ADMIN"))
+                .orElse(false);
     }
 }

@@ -3,6 +3,9 @@ package sansam.shimbox.product.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sansam.shimbox.auth.domain.User;
+import sansam.shimbox.auth.enums.Role;
+import sansam.shimbox.auth.repository.UserRepository;
 import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.driver.repository.DriverRepository;
 import sansam.shimbox.global.exception.CustomException;
@@ -18,9 +21,17 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final DriverRepository driverRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public ResponseProductDto saveProduct(RequestProductSaveDto dto) {
+    public ResponseProductDto saveProduct(Long userId, RequestProductSaveDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!user.getRole().equals(Role.ADMIN)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
         Driver driver = driverRepository.findById(dto.getDriverId())
                 .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
 
@@ -49,5 +60,20 @@ public class ProductService {
                 .shippingStatus(saved.getShippingStatus())
                 .driverId(saved.getDriver().getDriverId())
                 .build();
+    }
+
+    @Transactional
+    public void deleteProduct(Long userId, Long productId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!user.getRole().equals(Role.ADMIN)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SHIPP_NOT_FOUND));
+
+        productRepository.delete(product);
     }
 }

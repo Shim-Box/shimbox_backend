@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sansam.shimbox.driver.dto.response.ResponseShippingStatusDto;
 import sansam.shimbox.global.common.BaseResponse;
 import sansam.shimbox.global.exception.ErrorCode;
@@ -24,7 +21,7 @@ import sansam.shimbox.product.service.ProductService;
 @Tag(name = "ProductController", description = "상품")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/product")
+@RequestMapping("/api/v1/product")
 public class ProductController {
 
     private final ProductService productService;
@@ -39,7 +36,23 @@ public class ProductController {
     public ResponseEntity<BaseResponse<ResponseProductDto>> productSave(
             @Parameter(hidden = true) @CurrentUser Long userId,
             @RequestBody RequestProductSaveDto dto) {
-        ResponseProductDto response = productService.saveProduct(dto);
+        ResponseProductDto response = productService.saveProduct(userId, dto);
         return ResponseEntity.ok(BaseResponse.success(response, "상품 등록 완료", HttpStatus.OK));
+    }
+
+
+    @Operation(summary = "상품 삭제 API", description = "상품 ID로 기사 본인의 상품 삭제")
+    @ApiErrorCodeExamples({
+            ErrorCode.UNAUTHORIZED,
+            ErrorCode.FORBIDDEN,
+            ErrorCode.PRODUCT_NOT_FOUND,
+            ErrorCode.INTERNAL_SERVER_ERROR
+    })
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<BaseResponse<Void>> productDelete(
+            @Parameter(hidden = true) @CurrentUser Long userId,
+            @PathVariable Long productId) {
+        productService.deleteProduct(userId, productId);
+        return ResponseEntity.ok(BaseResponse.success(null, "상품 삭제 완료", HttpStatus.OK));
     }
 }

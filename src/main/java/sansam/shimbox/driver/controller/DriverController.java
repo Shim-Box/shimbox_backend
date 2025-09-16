@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sansam.shimbox.driver.dto.request.*;
+import sansam.shimbox.driver.dto.request.RequestLeaveWorkDto;
 import sansam.shimbox.driver.dto.response.*;
 import sansam.shimbox.driver.dto.response.record.DeliveryGroupDto;
 import sansam.shimbox.driver.dto.response.record.DeliveryLocationSummaryDto;

@@ -4,7 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.product.domain.Product;
+import sansam.shimbox.product.enums.ShippingStatus;
 
 import java.util.List;
 
@@ -17,4 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.isDeleted = false AND p.driver.user.id = :userId")
     List<Product> findActiveProductsByDriverUserId(@Param("userId") Long userId);
+
+    List<Product> findAllByDriverAndShippingStatusAndIsDeletedFalse(Driver driver, ShippingStatus shippingStatus);
+
 }

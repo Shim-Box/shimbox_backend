@@ -17,8 +17,6 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE TB_PRODUCT SET is_deleted = true, deleted_date = NOW() WHERE product_id = ?")
-@SQLRestriction("is_deleted = false")
 public class Product extends BaseTimeEntity {
 
     @Id
@@ -60,4 +58,8 @@ public class Product extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "driver_id", nullable = false)
     private Driver driver;
+
+    public void updateDeliveryImageUrl(String deliveryImageUrl) {
+        this.deliveryImageUrl = deliveryImageUrl;
+    }
 }
