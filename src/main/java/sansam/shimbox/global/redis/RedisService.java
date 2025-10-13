@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import sansam.shimbox.driver.enums.ConditionStatus;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -71,10 +72,16 @@ public class RedisService {
         if (json == null) return null;
 
         try {
+            @SuppressWarnings("unchecked")
             Map<String, Object> map = objectMapper.readValue(json, Map.class);
             return ConditionStatus.valueOf((String) map.get("conditionStatus"));
         } catch (JsonProcessingException | IllegalArgumentException e) {
             return null;
         }
+    }
+
+    // 패턴으로 키 조회
+    public Set<String> getKeys(String pattern) {
+        return redisTemplate.keys(pattern);
     }
 }
