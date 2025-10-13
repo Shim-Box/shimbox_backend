@@ -6,6 +6,8 @@ build/
 !**/src/test/**/build/
 .env
 .env.stag
+docker-compose.yml
+script/
 
 ### STS ###
 .apt_generated
