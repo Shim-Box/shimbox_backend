@@ -19,6 +19,8 @@ import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.global.redis.RedisService;
 import sansam.shimbox.global.security.JwtUtil;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -28,6 +30,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final RedisService redisService;
 
+    // 회원가입
     @Transactional
     public ResponseUserSaveDto save(RequestUserSaveDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
@@ -46,8 +49,11 @@ public class AuthService {
             }
         }
 
+        UUID userUid = UUID.randomUUID();
+
         User user = User.builder()
                 .email(dto.getEmail())
+                .userUid(userUid)
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
                 .birth(dto.getBirth())
@@ -70,14 +76,18 @@ public class AuthService {
         return new ResponseUserSaveDto(user.getId(), user.getEmail(), user.getRole().name());
     }
 
+    // 관리자 회원가입
     @Transactional
     public ResponseUserSaveDto saveAdmin(RequestAdminSaveDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
+        UUID userUid = UUID.randomUUID();
+
         User admin = User.builder()
                 .email(dto.getEmail())
+                .userUid(userUid)
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
                 .birth("000000") // 임시값

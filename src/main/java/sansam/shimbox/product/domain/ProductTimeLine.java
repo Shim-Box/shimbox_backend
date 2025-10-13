@@ -2,37 +2,51 @@ package sansam.shimbox.product.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import sansam.shimbox.auth.domain.User;
-import sansam.shimbox.driver.domain.Driver;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import sansam.shimbox.global.common.BaseTimeEntity;
 import sansam.shimbox.product.enums.ShippingStatus;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "TB_PRODUCT_TIME")
+@Table(name = "TB_PRODUCT_TIMELINE")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE TB_PRODUCT_TIMELINE SET is_deleted = true, delete_date = NOW() WHERE timeline_id = ?")
+@SQLRestriction("is_deleted = false")
 public class ProductTimeLine extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_time_line_id")
-    private Long productTimeLineId;
+    @Column(name = "timeline_id")
+    private Long timeLineId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "prev_status", nullable = false, length = 50)
-    private ShippingStatus prevStatus;
-
-    @Column(name = "location", nullable = false, length = 50)
-    private String location;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "driver_id")
-    private Driver driver;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ShippingStatus status;
+
+    @Column(name = "status_changed_at", nullable = false)
+    private LocalDateTime statusChangedAt;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "address_short")
+    private String addressShort;
+
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    @Column(name = "delete_date")
+    private LocalDateTime deleteDate;
 }

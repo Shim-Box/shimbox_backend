@@ -52,16 +52,16 @@ public class SecurityConfig {
                 .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api-docs/**",
-                                "/api/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/shimBox/api-docs",
+                                "/shimBox/api-docs/**",
+                                "/shimBox/swagger-ui/**",
+                                "/v3/api-docs/**"
                                 ).permitAll()
-                        .requestMatchers("/api/v1/mock/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/admin/**", "/api/v1/product/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/driver/**").hasAnyRole("ADMIN","USER")
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/locations/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
         // 커스텀 필터 등록

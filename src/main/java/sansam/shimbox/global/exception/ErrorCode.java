@@ -34,13 +34,16 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     USERS_NOT_FOUND(HttpStatus.NOT_FOUND, "일부 유저를 찾을 수 없습니다."),
     DRIVER_NOT_FOUND(HttpStatus.NOT_FOUND, "기사 정보를 찾을 수 없습니다."),
+    DRIVER_REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "기사에게 할당된 지역이 없습니다."),
     HEALTH_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 드라이버의 건강 기록이 존재하지 않습니다."),
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
     DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "배정받은 상품이 없습니다."),
     SHIPP_NOT_FOUND(HttpStatus.NOT_FOUND, "배송 정보가 존재하지 않습니다."),
+    LOCATION_NOT_FOUND(HttpStatus.NOT_FOUND, "위치 정보를 찾을 수 없습니다."),
 
     // 409 Conflict
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+    DRIVER_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "이미 지역에 배정된 기사입니다."),
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),

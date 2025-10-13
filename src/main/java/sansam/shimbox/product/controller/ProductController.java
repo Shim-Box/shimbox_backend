@@ -2,14 +2,11 @@ package sansam.shimbox.product.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sansam.shimbox.driver.dto.response.ResponseShippingStatusDto;
 import sansam.shimbox.global.common.BaseResponse;
 import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.global.security.CurrentUser;
@@ -55,4 +52,5 @@ public class ProductController {
         productService.deleteProduct(userId, productId);
         return ResponseEntity.ok(BaseResponse.success(null, "상품 삭제 완료", HttpStatus.OK));
     }
+
 }

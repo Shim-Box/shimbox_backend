@@ -10,7 +10,6 @@ import sansam.shimbox.driver.enums.Finish1;
 import sansam.shimbox.driver.enums.Finish2;
 import sansam.shimbox.driver.enums.Finish3;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -56,6 +55,9 @@ public class Health extends BaseTimeEntity {
     @Column(name = "contition_status")
     private ConditionStatus conditionStatus;
 
+    @Column(name = "delivery_count")
+    private Integer deliveryCount;
+
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
@@ -80,6 +82,12 @@ public class Health extends BaseTimeEntity {
     public void updateRealtimeMetrics(int step, int heartRate, ConditionStatus status) {
         this.step = step;
         this.heartRate = heartRate;
-        this.conditionStatus = status;
+        if (status != null) {
+            this.conditionStatus = status;
+        }
+    }
+
+    public void updateDeliveryCount(int deliveryCount) {
+        this.deliveryCount = deliveryCount;
     }
 }
