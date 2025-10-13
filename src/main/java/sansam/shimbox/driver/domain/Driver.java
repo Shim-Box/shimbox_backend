@@ -9,7 +9,6 @@ import sansam.shimbox.driver.enums.Attendance;
 import sansam.shimbox.global.common.BaseTimeEntity;
 import sansam.shimbox.product.domain.Product;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,6 +49,9 @@ public class Driver extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
     private List<Health> healthRecords;
+
+    @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
+    private List<DriverRegion> driverRegions;
 
     public void changeAttendanceOnly(Attendance newStatus) {
         this.attendance = newStatus;

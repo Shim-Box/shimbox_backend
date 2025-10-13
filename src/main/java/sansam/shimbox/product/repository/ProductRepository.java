@@ -21,5 +21,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findActiveProductsByDriverUserId(@Param("userId") Long userId);
 
     List<Product> findAllByDriverAndShippingStatusAndIsDeletedFalse(Driver driver, ShippingStatus shippingStatus);
+    
+    List<Product> findByDriverAndIsDeletedFalse(Driver driver);
+    
+    List<Product> findByDriverAndShippingStatusInAndIsDeletedFalse(Driver driver, List<ShippingStatus> shippingStatuses);
+    
+    // 특정 배송 상태의 상품 조회
+    List<Product> findByDriverAndShippingStatusAndIsDeletedFalse(Driver driver, ShippingStatus shippingStatus);
 
 }

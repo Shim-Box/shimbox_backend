@@ -9,6 +9,7 @@ import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.global.common.BaseTimeEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "TB_USER")
@@ -25,7 +26,10 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "email", length = 100, nullable = false, unique = true)
+    @Column(name = "user_uid", nullable = false, unique = true, updatable = false, columnDefinition = "BINARY(16)")
+    private UUID userUid = UUID.randomUUID();
+
+    @Column(name = "email", length = 100, nullable = false)
     private String email;
 
     @Column(name = "password", length = 100, nullable = false)
