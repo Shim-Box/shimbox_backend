@@ -1,6 +1,7 @@
 package sansam.shimbox.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sansam.shimbox.driver.enums.Attendance;
 import sansam.shimbox.driver.enums.ConditionStatus;
+import sansam.shimbox.product.enums.ShippingStatus;
 import sansam.shimbox.global.exception.ErrorCode;
+import sansam.shimbox.global.security.CurrentUser;
 import sansam.shimbox.global.swagger.ApiErrorCodeExamples;
 import sansam.shimbox.location.domain.LocationData;
 import sansam.shimbox.location.dto.request.RequestLocationQueryDto;
@@ -29,7 +32,8 @@ import sansam.shimbox.user.service.AdminService;
 import sansam.shimbox.product.service.ProductService;
 import sansam.shimbox.product.dto.response.ResponseProductTimelineDto;
 import sansam.shimbox.product.dto.response.ResponseProductDto;
-import sansam.shimbox.product.enums.ShippingStatus;
+import sansam.shimbox.product.dto.response.ResponseUnassignedProductDto;
+import sansam.shimbox.product.dto.request.RequestProductAssignDto;
 import sansam.shimbox.user.dto.response.ResponseDriverProfileDto;
 import sansam.shimbox.global.common.BaseResponse;
 import sansam.shimbox.global.common.PagedResponse;
@@ -46,8 +50,8 @@ import java.util.List;
 public class AdminController {
 
         private final AdminService adminService;
-        private final LocationRoomService locationRoomService;
         private final ProductService productService;
+        private final LocationRoomService locationRoomService;
         private final HeartRateTimelineService heartRateTimelineService;
 
     @Operation(summary = "가입 대기자 조회 API")
@@ -211,4 +215,40 @@ public class AdminController {
         
         return ResponseEntity.ok(BaseResponse.success(timeline, "기사 심박수 타임라인 조회 완료", HttpStatus.OK));
     }
+
+    // ==================== 상품 관리 ====================
+    
+    /**
+     * 할당되지 않은 상품 목록 조회 (기사에게 할당하기 전)
+     */
+    @GetMapping("/products/unassigned")
+    @Operation(summary = "할당되지 않은 상품 조회 API", description = "기사에게 할당되지 않은 상품 목록을 조회합니다.")
+    @ApiErrorCodeExamples({
+            ErrorCode.DELIVERY_NOT_FOUND,
+            ErrorCode.INTERNAL_SERVER_ERROR
+    })
+    public ResponseEntity<BaseResponse<List<ResponseUnassignedProductDto>>> getUnassignedProducts() {
+        List<ResponseUnassignedProductDto> products = adminService.getUnassignedProducts();
+        return ResponseEntity.ok(BaseResponse.success(products, "할당되지 않은 상품 조회 완료", HttpStatus.OK));
+    }
+
+    /**
+     * 기사에게 상품 할당
+     */
+    @PostMapping("/products/assign")
+    @Operation(summary = "기사 상품 할당 API", description = "기존 상품을 특정 기사에게 할당합니다.")
+    @ApiErrorCodeExamples({
+            ErrorCode.UNAUTHORIZED,
+            ErrorCode.FORBIDDEN,
+            ErrorCode.PRODUCT_NOT_FOUND,
+            ErrorCode.DRIVER_NOT_FOUND,
+            ErrorCode.INTERNAL_SERVER_ERROR
+    })
+    public ResponseEntity<BaseResponse<ResponseProductDto>> assignProduct(
+            @Parameter(hidden = true) @CurrentUser Long userId,
+            @RequestBody RequestProductAssignDto dto) {
+        ResponseProductDto response = productService.assignProduct(userId, dto);
+        return ResponseEntity.ok(BaseResponse.success(response, "상품 할당 완료", HttpStatus.OK));
+    }
+
 }

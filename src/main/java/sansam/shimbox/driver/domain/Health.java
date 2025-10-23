@@ -59,6 +59,7 @@ public class Health extends BaseTimeEntity {
     private Integer deliveryCount;
 
     @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
     private Boolean isDeleted = false;
 
     @Column(name = "delete_date")

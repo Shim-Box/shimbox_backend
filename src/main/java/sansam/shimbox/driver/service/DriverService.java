@@ -199,7 +199,7 @@ public class DriverService {
 
         if (current == ShippingStatus.WAITING && requested == ShippingStatus.STARTED ||
                 current == ShippingStatus.STARTED && requested == ShippingStatus.COMPLETED) {
-            product.setShippingStatus(requested);
+            product.updateShippingStatus(requested);
         } else {
             throw new CustomException(ErrorCode.INVALID_SHIPPING_TRANSITION);
         }

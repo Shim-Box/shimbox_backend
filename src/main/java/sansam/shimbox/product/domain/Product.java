@@ -2,8 +2,6 @@ package sansam.shimbox.product.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.global.common.BaseTimeEntity;
 import sansam.shimbox.product.enums.ShippingStatus;
@@ -13,7 +11,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "TB_PRODUCT")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,23 +40,33 @@ public class Product extends BaseTimeEntity {
     private String postalCode;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "shipping_status", nullable = false)
+    @Column(name = "shipping_status")
     private ShippingStatus shippingStatus;
 
     @Column(name = "delivery_image_url")
     private String deliveryImageUrl;
 
     @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
     private Boolean isDeleted = false;
 
     @Column(name = "delete_date")
     private LocalDateTime deleteDate;
 
     @ManyToOne
-    @JoinColumn(name = "driver_id", nullable = false)
+    @JoinColumn(name = "driver_id")
     private Driver driver;
 
     public void updateDeliveryImageUrl(String deliveryImageUrl) {
         this.deliveryImageUrl = deliveryImageUrl;
+    }
+
+    public void assignToDriver(Driver driver) {
+        this.driver = driver;
+        this.shippingStatus = ShippingStatus.WAITING;
+    }
+
+    public void updateShippingStatus(ShippingStatus shippingStatus) {
+        this.shippingStatus = shippingStatus;
     }
 }

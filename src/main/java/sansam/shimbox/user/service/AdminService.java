@@ -25,6 +25,7 @@ import sansam.shimbox.user.dto.response.ResponseUserPendingDto;
 import sansam.shimbox.user.dto.response.ResponseDriverProfileDto;
 import sansam.shimbox.product.domain.Product;
 import sansam.shimbox.product.dto.response.ResponseProductDto;
+import sansam.shimbox.product.dto.response.ResponseUnassignedProductDto;
 import sansam.shimbox.product.repository.ProductRepository;
 import sansam.shimbox.global.common.PagedResponse;
 import sansam.shimbox.global.common.RequestPagingDto;
@@ -217,6 +218,11 @@ public class AdminService {
             products = productRepository.findByDriverAndShippingStatusAndIsDeletedFalse(driver, shippingStatus);
         }
 
+        // 등록된 상품이 없는 경우
+        if (products.isEmpty()) {
+            throw new CustomException(ErrorCode.DELIVERY_NOT_FOUND);
+        }
+
         // 현재 근무 중인 상품들만 필터링
         List<Product> currentWorkProducts = products.stream()
                 .filter(product -> {
@@ -232,6 +238,11 @@ public class AdminService {
                     return false;
                 })
                 .toList();
+
+        // 필터링 후에도 상품이 없는 경우
+        if (currentWorkProducts.isEmpty()) {
+            throw new CustomException(ErrorCode.DELIVERY_NOT_FOUND);
+        }
 
         return currentWorkProducts.stream()
                 .map(ResponseProductDto::from)
@@ -312,6 +323,22 @@ public class AdminService {
             return Duration.ZERO;
         }
         return Duration.between(driver.getWorkTime(), LocalDateTime.now());
+    }
+    
+    /**
+     * 할당되지 않은 상품 목록 조회 (기사에게 할당하기 전)
+     */
+    @Transactional(readOnly = true)
+    public List<ResponseUnassignedProductDto> getUnassignedProducts() {
+        List<Product> products = productRepository.findByDriverIsNullAndShippingStatusIsNullAndIsDeletedFalse();
+
+        if (products.isEmpty()) {
+            throw new CustomException(ErrorCode.DELIVERY_NOT_FOUND);
+        }
+
+        return products.stream()
+                .map(ResponseUnassignedProductDto::from)
+                .toList();
     }
 
 }

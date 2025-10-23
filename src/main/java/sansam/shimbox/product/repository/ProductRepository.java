@@ -28,5 +28,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     
     // 특정 배송 상태의 상품 조회
     List<Product> findByDriverAndShippingStatusAndIsDeletedFalse(Driver driver, ShippingStatus shippingStatus);
+    
+    // 할당되지 않은 상품 조회 (기사에게 할당하기 전) - shippingStatus가 null
+    List<Product> findByDriverIsNullAndShippingStatusIsNullAndIsDeletedFalse();
 
 }

@@ -27,6 +27,7 @@ public class User extends BaseTimeEntity {
     private Long id;
 
     @Column(name = "user_uid", nullable = false, unique = true, updatable = false, columnDefinition = "BINARY(16)")
+    @Builder.Default
     private UUID userUid = UUID.randomUUID();
 
     @Column(name = "email", length = 100, nullable = false)
@@ -76,9 +77,11 @@ public class User extends BaseTimeEntity {
     private String profileImage;
 
     @Column(name = "approval_status", nullable = false)
+    @Builder.Default
     private Boolean approvalStatus = false;
 
     @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
     private Boolean isDeleted = false;
 
     @Column(name = "deleted_date")
