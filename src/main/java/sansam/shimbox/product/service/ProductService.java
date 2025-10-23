@@ -12,8 +12,10 @@ import sansam.shimbox.global.exception.CustomException;
 import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.product.domain.Product;
 import sansam.shimbox.product.domain.ProductTimeLine;
-import sansam.shimbox.product.dto.request.RequestProductSaveDto;
+import sansam.shimbox.product.dto.request.RequestProductCreateDto;
+import sansam.shimbox.product.dto.request.RequestProductAssignDto;
 import sansam.shimbox.product.dto.response.ResponseProductDto;
+import sansam.shimbox.product.dto.response.ResponseUnassignedProductDto;
 import sansam.shimbox.product.dto.response.ResponseProductTimelineDto;
 import sansam.shimbox.product.enums.ShippingStatus;
 import sansam.shimbox.product.repository.ProductRepository;
@@ -31,17 +33,17 @@ public class ProductService {
     private final DriverRepository driverRepository;
     private final UserRepository userRepository;
 
+    /**
+     * 상품 생성 (할당되지 않은 상태)
+     */
     @Transactional
-    public ResponseProductDto saveProduct(Long userId, RequestProductSaveDto dto) {
+    public ResponseUnassignedProductDto createProduct(Long userId, RequestProductCreateDto dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!user.getRole().equals(Role.ADMIN)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
-
-        Driver driver = driverRepository.findById(dto.getDriverId())
-                .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
 
         Product product = Product.builder()
                 .productName(dto.getProductName())
@@ -50,26 +52,52 @@ public class ProductService {
                 .address(dto.getAddress())
                 .detailAddress(dto.getDetailAddress())
                 .postalCode(dto.getPostalCode())
-                .shippingStatus(dto.getShippingStatus())
-                .driver(driver)
+                .shippingStatus(null)
+                .driver(null)
                 .isDeleted(false)
                 .build();
 
         Product saved = productRepository.save(product);
 
-        return ResponseProductDto.builder()
-                .productId(saved.getProductId())
-                .productName(saved.getProductName())
-                .recipientName(saved.getRecipientName())
-                .recipientPhoneNumber(saved.getRecipientPhoneNumber())
-                .address(saved.getAddress())
-                .detailAddress(saved.getDetailAddress())
-                .postalCode(saved.getPostalCode())
-                .shippingStatus(saved.getShippingStatus())
-                .driverId(saved.getDriver().getDriverId())
-                .build();
+        return ResponseUnassignedProductDto.from(saved);
     }
 
+    /**
+     * 기사에게 상품 할당
+     */
+    @Transactional
+    public ResponseProductDto assignProduct(Long userId, RequestProductAssignDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!user.getRole().equals(Role.ADMIN)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        // 상품 조회
+        Product product = productRepository.findById(dto.getProductId())
+                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // 이미 할당된 상품인지 확인
+        if (product.getDriver() != null) {
+            throw new CustomException(ErrorCode.PRODUCT_NOT_FOUND);
+        }
+
+        // 기사 조회
+        Driver driver = driverRepository.findById(dto.getDriverId())
+                .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
+
+        // 상품 업데이트
+        product.assignToDriver(driver);
+
+        Product saved = productRepository.save(product);
+
+        return ResponseProductDto.from(saved);
+    }
+
+    /**
+     * 상품 삭제
+     */
     @Transactional
     public void deleteProduct(Long userId, Long productId) {
         User user = userRepository.findById(userId)

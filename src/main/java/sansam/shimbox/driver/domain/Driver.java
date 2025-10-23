@@ -29,12 +29,14 @@ public class Driver extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "attendance", nullable = false)
+    @Builder.Default
     private Attendance attendance = Attendance.BEFORE_WORK;
 
     @Column(name = "work_time")
     private LocalDateTime workTime;
 
     @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
     private Boolean isDeleted = false;
 
     @Column(name = "delete_date")

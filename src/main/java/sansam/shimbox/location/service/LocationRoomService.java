@@ -177,18 +177,24 @@ public class LocationRoomService {
     }
     
     /**
-     * 건강 데이터 추출 및 객체 생성
+     * 건강 데이터 추출 및 객체 생성 (앱에서 받은 피로도 데이터 사용)
      */
     private MessageDriverHealth.Payload extractHealthData(JsonNode payload, Long userId) {
         Integer step = payload.path("step").asInt();
         Integer heartRate = payload.path("heartRate").asInt();
         String capturedAt = payload.path("captured_at").asText(Instant.now().toString());
 
+        // 앱에서 받은 피로도 수치로 구간별 처리
+        Double score = payload.path("score").asDouble(0.0);
+        String level = getLevelByScore(score);
+
         return new MessageDriverHealth.Payload(
                 String.valueOf(userId),
                 step,
                 heartRate,
-                capturedAt
+                capturedAt,
+                score,
+                level
         );
     }
     
@@ -408,4 +414,19 @@ public class LocationRoomService {
             return isDead;
         });
     }
+
+
+    // ==================== 피로도 구간별 처리 메서드들 ====================
+    
+    /**
+     * 피로도 수치에 따른 위험등급 반환
+     */
+    private String getLevelByScore(Double score) {
+        if (score >= 0.75) return "위험";
+        if (score >= 0.50) return "주의";
+        if (score >= 0.25) return "보통";
+        return "좋음";
+    }
+
+
 }

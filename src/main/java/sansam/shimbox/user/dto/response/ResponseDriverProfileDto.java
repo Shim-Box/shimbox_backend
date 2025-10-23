@@ -41,6 +41,12 @@ public class ResponseDriverProfileDto {
     @Schema(description = "근무 시간 (분)", example = "480")
     private Long workDurationMinutes;
 
+    @Schema(description = "키 (cm)", example = "175")
+    private Integer height;
+
+    @Schema(description = "몸무게 (kg)", example = "70")
+    private Integer weight;
+
     public static ResponseDriverProfileDto from(Driver driver, List<Region> assignedRegions, 
             Long totalDeliveryCount, Long completedDeliveryCount, Duration workDuration) {
         return ResponseDriverProfileDto.builder()
@@ -54,6 +60,8 @@ public class ResponseDriverProfileDto {
                 .totalDeliveryCount(totalDeliveryCount)
                 .completedDeliveryCount(completedDeliveryCount)
                 .workDurationMinutes(workDuration != null ? workDuration.toMinutes() : 0L)
+                .height(driver.getUser().getHeight())
+                .weight(driver.getUser().getWeight())
                 .build();
     }
 }

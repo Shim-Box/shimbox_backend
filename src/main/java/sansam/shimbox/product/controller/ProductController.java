@@ -11,8 +11,8 @@ import sansam.shimbox.global.common.BaseResponse;
 import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.global.security.CurrentUser;
 import sansam.shimbox.global.swagger.ApiErrorCodeExamples;
-import sansam.shimbox.product.dto.request.RequestProductSaveDto;
-import sansam.shimbox.product.dto.response.ResponseProductDto;
+import sansam.shimbox.product.dto.request.RequestProductCreateDto;
+import sansam.shimbox.product.dto.response.ResponseUnassignedProductDto;
 import sansam.shimbox.product.service.ProductService;
 
 @Tag(name = "ProductController", description = "상품")
@@ -23,20 +23,19 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @Operation(summary = "상품 등록 API", description = "기사 ID와 상품 정보 등록")
+    @Operation(summary = "상품 생성 API", description = "할당되지 않은 상태로 상품 생성")
     @ApiErrorCodeExamples({
             ErrorCode.UNAUTHORIZED,
             ErrorCode.FORBIDDEN,
             ErrorCode.INTERNAL_SERVER_ERROR
     })
-    @PostMapping("/save")
-    public ResponseEntity<BaseResponse<ResponseProductDto>> productSave(
+    @PostMapping("/create")
+    public ResponseEntity<BaseResponse<ResponseUnassignedProductDto>> createProduct(
             @Parameter(hidden = true) @CurrentUser Long userId,
-            @RequestBody RequestProductSaveDto dto) {
-        ResponseProductDto response = productService.saveProduct(userId, dto);
-        return ResponseEntity.ok(BaseResponse.success(response, "상품 등록 완료", HttpStatus.OK));
+            @RequestBody RequestProductCreateDto dto) {
+        ResponseUnassignedProductDto response = productService.createProduct(userId, dto);
+        return ResponseEntity.ok(BaseResponse.success(response, "상품 생성 완료", HttpStatus.OK));
     }
-
 
     @Operation(summary = "상품 삭제 API", description = "상품 ID로 기사 본인의 상품 삭제")
     @ApiErrorCodeExamples({

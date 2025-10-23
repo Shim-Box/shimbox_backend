@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE TB_DRIVER_REGION_ASSIGNMENT SET is_deleted = true, delete_date = NOW() WHERE assignment_id = ?")
+@SQLDelete(sql = "UPDATE TB_DRIVER_REGION SET is_deleted = true, delete_date = NOW() WHERE driver_region_id = ?")
 @SQLRestriction("is_deleted = false")
 public class DriverRegion extends BaseTimeEntity {
 
@@ -33,6 +33,7 @@ public class DriverRegion extends BaseTimeEntity {
     private Region region;
 
     @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
     private Boolean isDeleted = false;
 
     @Column(name = "delete_date")

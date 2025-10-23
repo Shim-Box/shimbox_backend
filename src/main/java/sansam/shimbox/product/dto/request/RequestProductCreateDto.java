@@ -2,21 +2,10 @@ package sansam.shimbox.product.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import sansam.shimbox.product.enums.ShippingStatus;
+import lombok.Data;
 
-@Getter
-@Setter
-public class RequestProductSaveDto {
-
-    @Schema(description = "기사 ID", example = "1")
-    @NotNull
-    private Long driverId;
-
-    @Schema(description = "배송상태", example = "배송대기")
-    private ShippingStatus shippingStatus;
+@Data
+public class RequestProductCreateDto {
 
     @Schema(description = "상품명", example = "세탁세제")
     @NotBlank

@@ -10,6 +10,8 @@ public record MessageDriverHealth(
             @JsonProperty("userId") String userId,
             @JsonProperty("step") Integer step,
             @JsonProperty("heartRate") Integer heartRate,
-            @JsonProperty("capturedAt") String capturedAt
+            @JsonProperty("capturedAt") String capturedAt,
+            @JsonProperty("score") Double score,
+            @JsonProperty("level") String level
     ) {}
 }
