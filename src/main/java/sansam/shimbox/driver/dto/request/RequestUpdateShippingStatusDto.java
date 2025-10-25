@@ -1,10 +1,12 @@
 package sansam.shimbox.driver.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import sansam.shimbox.product.enums.ShippingStatus;
 
 @Getter
+@AllArgsConstructor
 public class RequestUpdateShippingStatusDto {
 
     @Schema(description = "상품 ID", example = "1")

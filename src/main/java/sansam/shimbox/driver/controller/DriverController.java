@@ -8,14 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sansam.shimbox.driver.dto.request.*;
-import sansam.shimbox.driver.dto.request.RequestLeaveWorkDto;
+import sansam.shimbox.driver.dto.request.RequestSurveyDto;
 import sansam.shimbox.driver.dto.response.*;
 import sansam.shimbox.driver.dto.response.record.DeliveryGroupDto;
 import sansam.shimbox.driver.dto.response.record.DeliveryLocationSummaryDto;
 import sansam.shimbox.driver.service.DriverService;
-import sansam.shimbox.driver.service.HeartRateTimelineService;
-import sansam.shimbox.location.service.LocationRoomService;
-import sansam.shimbox.location.dto.response.MessageDriverHealth;
 import sansam.shimbox.global.common.BaseResponse;
 import sansam.shimbox.global.exception.ErrorCode;
 import sansam.shimbox.global.security.CurrentUser;
@@ -30,8 +27,6 @@ import java.util.List;
 public class DriverController {
 
     private final DriverService driverService;
-    private final LocationRoomService locationRoomService;
-    private final HeartRateTimelineService heartRateTimelineService;
 
     @Operation(summary = "근태 상태 변경 API")
     @ApiErrorCodeExamples({
@@ -56,25 +51,11 @@ public class DriverController {
             ErrorCode.INTERNAL_SERVER_ERROR
     })
     @PostMapping("/health/survey")
-    public ResponseEntity<BaseResponse<ResponseSurveySaveDto>> saveHealthSurvey(
+    public ResponseEntity<BaseResponse<ResponseSurveyDto>> saveHealthSurvey(
             @Parameter(hidden = true) @CurrentUser Long userId,
-            @RequestBody RequestLeaveWorkDto dto) {
-        ResponseSurveySaveDto result = driverService.leaveWorkHealthSave(userId, dto);
+            @RequestBody RequestSurveyDto dto) {
+        ResponseSurveyDto result = driverService.saveHealthSurvey(userId, dto);
         return ResponseEntity.ok(BaseResponse.success(result, "건강 설문 저장 완료", HttpStatus.OK));
-    }
-
-    @Operation(summary = "기사 퇴근 후 건강 데이터 조회")
-    @ApiErrorCodeExamples({
-            ErrorCode.UNAUTHORIZED,
-            ErrorCode.DRIVER_NOT_FOUND,
-            ErrorCode.HEALTH_RECORD_NOT_FOUND,
-            ErrorCode.INTERNAL_SERVER_ERROR
-    })
-    @GetMapping("/health/today")
-    public ResponseEntity<BaseResponse<ResponseLeaveWorkDto>> getTodayHealthSummary(
-            @Parameter(hidden = true) @CurrentUser Long userId) {
-        ResponseLeaveWorkDto dto = driverService.getTodayHealthSummary(userId);
-        return ResponseEntity.ok(BaseResponse.success(dto, "퇴근 후 건강 데이터 조회 성공", HttpStatus.OK));
     }
 
     @Operation(summary = "배정 지역 조회 API")
@@ -154,7 +135,7 @@ public class DriverController {
             ErrorCode.DRIVER_NOT_FOUND,
             ErrorCode.INTERNAL_SERVER_ERROR
     })
-    @GetMapping("/my/weekly-stats")
+    @GetMapping("/my/weekly/stats")
     public ResponseEntity<BaseResponse<ResponseWeeklyWorkStatsDto>> getWeeklyWorkStats(
             @Parameter(hidden = true) @CurrentUser Long userId) {
         ResponseWeeklyWorkStatsDto stats = driverService.getWeeklyWorkStats(userId);

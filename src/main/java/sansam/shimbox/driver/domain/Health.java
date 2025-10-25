@@ -83,9 +83,7 @@ public class Health extends BaseTimeEntity {
     public void updateRealtimeMetrics(int step, int heartRate, ConditionStatus status) {
         this.step = step;
         this.heartRate = heartRate;
-        if (status != null) {
-            this.conditionStatus = status;
-        }
+        this.conditionStatus = status;
     }
 
     public void updateDeliveryCount(int deliveryCount) {

@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sansam.shimbox.driver.domain.Driver;
 import sansam.shimbox.driver.domain.DriverRegion;
 import sansam.shimbox.driver.domain.Health;
-import sansam.shimbox.driver.dto.request.RequestLeaveWorkDto;
+import sansam.shimbox.driver.dto.request.RequestSurveyDto;
 import sansam.shimbox.driver.dto.request.RequestSaveImageUrlDto;
 import sansam.shimbox.driver.dto.request.RequestUpdateShippingStatusDto;
 import sansam.shimbox.driver.dto.response.*;
@@ -14,6 +14,7 @@ import sansam.shimbox.driver.dto.response.record.DeliveryGroupDto;
 import sansam.shimbox.driver.dto.response.record.DeliveryLocationSummaryDto;
 import sansam.shimbox.driver.dto.response.record.DeliverySubGroupDto;
 import sansam.shimbox.driver.enums.Attendance;
+import sansam.shimbox.driver.enums.ConditionStatus;
 import sansam.shimbox.driver.repository.DriverRegionRepository;
 import sansam.shimbox.driver.repository.DriverRepository;
 import sansam.shimbox.driver.repository.HealthRepository;
@@ -30,6 +31,7 @@ import sansam.shimbox.location.dto.response.MessageDriverHealth;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +54,7 @@ public class DriverService {
         Driver driver = driverRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 한국 시간대 사용
         resetAttendanceIfExpired(driver, now); // 자동 초기화 처리
 
         Attendance currentStatus = getAttendance(requestedStatus, driver);
@@ -77,45 +79,39 @@ public class DriverService {
         return new ResponseAttendanceDto(driver.getAttendance(), now);
     }
 
-    //건강 설문 저장
+    // 기사 건강 설문 저장
     @Transactional
-    public ResponseSurveySaveDto leaveWorkHealthSave(Long userId, RequestLeaveWorkDto dto) {
+    public ResponseSurveyDto saveHealthSurvey(Long userId, RequestSurveyDto dto) {
         Driver driver = driverRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
 
         Health todayHealth = healthRepository.findTopByDriverOrderByCreatedDateDesc(driver)
                 .orElseThrow(() -> new CustomException(ErrorCode.HEALTH_RECORD_NOT_FOUND));
-
-        // LocationRoomService에서 실시간 건강 데이터 조회
-        MessageDriverHealth.Payload realtimeHealth = locationRoomService.getDriverHealth(userId);
         
         todayHealth.markOffWork(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneId.of("Asia/Seoul")),
                 dto.getFinish1(),
                 dto.getFinish2(),
                 dto.getFinish3()
         );
 
-        // 실시간 건강 데이터가 있으면 업데이트
-        if (realtimeHealth != null) {
+        // 요청에서 받은 건강 데이터로 업데이트
+        if (dto.getStep() != null && dto.getHeartRate() != null) {
             todayHealth.updateRealtimeMetrics(
-                    realtimeHealth.step(),
-                    realtimeHealth.heartRate(),
-                    null // conditionStatus는 제거되었으므로 null
+                    dto.getStep(),
+                    dto.getHeartRate(),
+                    dto.getConditionStatus()
             );
         }
 
-        return ResponseSurveySaveDto.builder()
-                .finish1(dto.getFinish1())
-                .finish2(dto.getFinish2())
-                .finish3(dto.getFinish3())
-                .build();
+        return ResponseSurveyDto.from(dto);
     }
+
 
     //톼근 후 기사 건강 데이터 조회
     @Transactional(readOnly = true)
-    public ResponseLeaveWorkDto getTodayHealthSummary(Long userId) {
-        Driver driver = driverRepository.findByUserId(userId)
+    public ResponseLeaveWorkDto getTodayHealthSummaryByDriverId(Long driverId) {
+        Driver driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
 
         Health todayHealth = healthRepository
@@ -301,8 +297,8 @@ public class DriverService {
         Driver driver = driverRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
 
-        // 5일 전 날짜 계산
-        LocalDateTime endDate = LocalDateTime.now();
+        // 5일 전 날짜 계산 (한국 시간대 기준)
+        LocalDateTime endDate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         LocalDateTime startDate = endDate.minusDays(5);
 
         // 5일 동안의 건강 데이터 조회 (근무 시간 포함)
@@ -319,7 +315,7 @@ public class DriverService {
         // 일별 통계 계산
         List<ResponseWeeklyWorkStatsDto.DailyWorkStats> dailyStats = workedDays.stream()
                 .map(health -> {
-                    // 근무 시간 계산 (분 단위)
+                    // 근무 시간 계산
                     Duration workDuration = Duration.between(health.getWorkTime(), health.getLeaveWorkTime());
                     long workMinutes = workDuration.toMinutes();
 
@@ -327,8 +323,6 @@ public class DriverService {
                             .date(health.getWorkTime().toLocalDate().toString())
                             .workMinutes(workMinutes)
                             .deliveryCount(health.getDeliveryCount() != null ? health.getDeliveryCount() : 0)
-                            .workStartTime(health.getWorkTime())
-                            .workEndTime(health.getLeaveWorkTime())
                             .build();
                 })
                 .sorted(Comparator.comparing(ResponseWeeklyWorkStatsDto.DailyWorkStats::getDate)) // 날짜 순으로 정렬
@@ -348,8 +342,8 @@ public class DriverService {
         double averageDailyWorkMinutes = actualWorkingDays > 0 ? (double) totalWorkMinutes / actualWorkingDays : 0.0;
         double averageDailyDeliveryCount = actualWorkingDays > 0 ? (double) totalDeliveryCount / actualWorkingDays : 0.0;
 
-        return ResponseWeeklyWorkStatsDto.from(driver, startDate, endDate, dailyStats,
-                totalWorkMinutes, totalDeliveryCount, averageDailyWorkMinutes, averageDailyDeliveryCount);
+        return ResponseWeeklyWorkStatsDto.from(driver, dailyStats, totalWorkMinutes, totalDeliveryCount, 
+            averageDailyWorkMinutes, averageDailyDeliveryCount);
     }
 
     //배송 도착 이미지 저장

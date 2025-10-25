@@ -22,7 +22,9 @@ import sansam.shimbox.location.dto.request.RequestLocationQueryDto;
 import sansam.shimbox.location.dto.response.MessageDriverHealth;
 import sansam.shimbox.location.service.LocationRoomService;
 import sansam.shimbox.driver.service.HeartRateTimelineService;
+import sansam.shimbox.driver.service.DriverService;
 import sansam.shimbox.driver.dto.response.ResponseHeartRateTimelineDto;
+import sansam.shimbox.driver.dto.response.ResponseLeaveWorkDto;
 import sansam.shimbox.user.dto.request.RequestDriverRegionDto;
 import sansam.shimbox.user.dto.request.RequestUserStatusDto;
 import sansam.shimbox.user.dto.response.ResponseDriverRegionDto;
@@ -53,6 +55,7 @@ public class AdminController {
         private final ProductService productService;
         private final LocationRoomService locationRoomService;
         private final HeartRateTimelineService heartRateTimelineService;
+        private final DriverService driverService;
 
     @Operation(summary = "가입 대기자 조회 API")
     @ApiErrorCodeExamples({
@@ -214,6 +217,22 @@ public class AdminController {
         }
         
         return ResponseEntity.ok(BaseResponse.success(timeline, "기사 심박수 타임라인 조회 완료", HttpStatus.OK));
+    }
+
+    @Operation(summary = "기사 퇴근 후 건강 데이터 조회 API", description = "관리자가 특정 기사의 퇴근 후 건강 데이터를 조회합니다")
+    @ApiErrorCodeExamples({
+            ErrorCode.UNAUTHORIZED,
+            ErrorCode.FORBIDDEN,
+            ErrorCode.DRIVER_NOT_FOUND,
+            ErrorCode.HEALTH_RECORD_NOT_FOUND,
+            ErrorCode.INTERNAL_SERVER_ERROR
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/driver/{driverId}/health")
+    public ResponseEntity<BaseResponse<ResponseLeaveWorkDto>> getDriverTodayHealthSummary(
+            @PathVariable Long driverId) {
+        ResponseLeaveWorkDto dto = driverService.getTodayHealthSummaryByDriverId(driverId);
+        return ResponseEntity.ok(BaseResponse.success(dto, "기사 퇴근 후 건강 데이터 조회 성공", HttpStatus.OK));
     }
 
     // ==================== 상품 관리 ====================

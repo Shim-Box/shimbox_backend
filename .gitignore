@@ -8,6 +8,7 @@ build/
 .env.stag
 docker-compose.yml
 script/
+docs
 
 ### STS ###
 .apt_generated
