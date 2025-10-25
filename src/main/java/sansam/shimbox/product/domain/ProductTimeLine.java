@@ -33,7 +33,7 @@ public class ProductTimeLine extends BaseTimeEntity {
     private ShippingStatus status;
 
     @Column(name = "status_changed_at", nullable = false)
-    private LocalDateTime statusChangedAt;
+    private String statusChangedAt;
 
     @Column(name = "latitude")
     private Double latitude;

@@ -21,7 +21,9 @@ import sansam.shimbox.product.enums.ShippingStatus;
 import sansam.shimbox.product.repository.ProductRepository;
 import sansam.shimbox.product.repository.ProductTimelineRepository;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -142,10 +144,14 @@ public class ProductService {
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new CustomException(ErrorCode.SHIPP_NOT_FOUND));
 
+            // 한국 시간대 문자열로 변환하여 저장
+            String kstTimeString = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
+
             ProductTimeLine timeline = ProductTimeLine.builder()
                     .product(product)
                     .status(status)
-                    .statusChangedAt(LocalDateTime.now())
+                    .statusChangedAt(kstTimeString)
                     .latitude(latitude)
                     .longitude(longitude)
                     .addressShort(addressShort)

@@ -8,8 +8,6 @@ import lombok.AllArgsConstructor;
 import sansam.shimbox.product.domain.ProductTimeLine;
 import sansam.shimbox.product.enums.ShippingStatus;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder
 @NoArgsConstructor
@@ -28,8 +26,8 @@ public class ResponseProductTimelineDto {
     @Schema(description = "배송 상태", example = "STARTED")
     private ShippingStatus status;
 
-    @Schema(description = "상태 변경 시간", example = "2025-01-20T10:30:00")
-    private LocalDateTime statusChangedAt;
+    @Schema(description = "상태 변경 시간 (한국 시간)", example = "2025-01-20T19:30:00+09:00")
+    private String statusChangedAt;
 
     @Schema(description = "위도", example = "37.501")
     private Double latitude;
