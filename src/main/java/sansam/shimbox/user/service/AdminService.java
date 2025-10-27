@@ -223,56 +223,11 @@ public class AdminService {
             throw new CustomException(ErrorCode.DELIVERY_NOT_FOUND);
         }
 
-        // 현재 근무 중인 상품들만 필터링
-        List<Product> currentWorkProducts = products.stream()
-                .filter(product -> {
-                    // 배송대기, 배송시작인 상품은 항상 포함 (현재 작업 중)
-                    if (product.getShippingStatus() == ShippingStatus.WAITING ||
-                        product.getShippingStatus() == ShippingStatus.STARTED) {
-                        return true;
-                    }
-                    // 배송완료된 상품은 현재 근무 시간 내에 완료된 것만 포함
-                    if (product.getShippingStatus() == ShippingStatus.COMPLETED) {
-                        return isCompletedDuringCurrentWork(product, driver);
-                    }
-                    return false;
-                })
-                .toList();
-
-        // 필터링 후에도 상품이 없는 경우
-        if (currentWorkProducts.isEmpty()) {
-            throw new CustomException(ErrorCode.DELIVERY_NOT_FOUND);
-        }
-
-        return currentWorkProducts.stream()
+        return products.stream()
                 .map(ResponseProductDto::from)
                 .toList();
     }
 
-    /**
-     * 상품이 현재 근무 시간 내에 완료되었는지 확인
-     * 
-     * @param product 상품
-     * @param driver 기사
-     * @return 현재 근무 시간 내 완료 여부
-     */
-    private boolean isCompletedDuringCurrentWork(Product product, Driver driver) {
-        // 기사가 현재 출근 상태인지 확인
-        if (driver.getAttendance() != Attendance.WORKING) {
-            // 출근 상태가 아니면 오늘 날짜 기준으로 확인
-            return product.getCreatedDate().toLocalDate().equals(LocalDate.now());
-        }
-        
-        // 기사의 출근 시간이 있는지 확인
-        if (driver.getWorkTime() == null) {
-            // 출근 시간이 없으면 오늘 날짜 기준으로 확인
-            return product.getCreatedDate().toLocalDate().equals(LocalDate.now());
-        }
-        
-        // 상품 완료 시간이 출근 시간 이후인지 확인
-        return product.getModifiedDate().isAfter(driver.getWorkTime());
-    }
-    
     /**
      * 관리자가 특정 기사의 프로필 조회
      * 
