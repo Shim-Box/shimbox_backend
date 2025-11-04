@@ -18,7 +18,6 @@ public class ResponseUnassignedProductDto {
     private String address;
     private String detailAddress;
     private String postalCode;
-    private String deliveryImageUrl;
 
     public static ResponseUnassignedProductDto from(Product product) {
         return ResponseUnassignedProductDto.builder()
@@ -29,7 +28,6 @@ public class ResponseUnassignedProductDto {
                 .address(product.getAddress())
                 .detailAddress(product.getDetailAddress())
                 .postalCode(product.getPostalCode())
-                .deliveryImageUrl(product.getDeliveryImageUrl())
                 .build();
     }
 }

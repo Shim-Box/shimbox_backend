@@ -89,8 +89,40 @@ public class ProductService {
         Driver driver = driverRepository.findById(dto.getDriverId())
                 .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
 
-        // 상품 업데이트
-        product.assignToDriver(driver);
+        // 기사에게 배정된 모든 상품 조회
+        List<Product> allProducts = productRepository.findByDriverAndIsDeletedFalse(driver);
+        
+        // 현재 최신 라운드 찾기 (Product의 assignedRound 최댓값)
+        Integer currentMaxRound = allProducts.stream()
+                .filter(p -> p.getAssignedRound() != null)
+                .mapToInt(Product::getAssignedRound)
+                .max()
+                .orElse(0);
+        
+        // 새로운 라운드 결정
+        Integer newRound;
+        if (currentMaxRound == 0) {
+            // 첫 배정인 경우 라운드 1
+            newRound = 1;
+        } else {
+            // 최신 라운드의 미완료 상품 확인
+            List<Product> currentRoundProducts = productRepository.findByDriverAndShippingStatusInAndIsDeletedFalseAndAssignedRound(
+                    driver,
+                    List.of(ShippingStatus.WAITING, ShippingStatus.STARTED),
+                    currentMaxRound
+            );
+            
+            // 최신 라운드에 미완료 상품이 없으면 새로운 라운드 시작
+            if (currentRoundProducts.isEmpty()) {
+                newRound = currentMaxRound + 1;
+            } else {
+                // 최신 라운드에 미완료 상품이 있으면 같은 라운드 사용
+                newRound = currentMaxRound;
+            }
+        }
+
+        // 상품 업데이트 (새로운 라운드로 배정)
+        product.assignToDriver(driver, newRound);
 
         Product saved = productRepository.save(product);
 

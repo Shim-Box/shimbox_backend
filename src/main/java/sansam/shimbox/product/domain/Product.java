@@ -57,16 +57,27 @@ public class Product extends BaseTimeEntity {
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
+    @Column(name = "assigned_round")
+    private Integer assignedRound;
+
     public void updateDeliveryImageUrl(String deliveryImageUrl) {
         this.deliveryImageUrl = deliveryImageUrl;
     }
 
-    public void assignToDriver(Driver driver) {
+    public void assignToDriver(Driver driver, Integer round) {
+        // 상품 배정 시 전달받은 라운드를 저장
         this.driver = driver;
         this.shippingStatus = ShippingStatus.WAITING;
+        this.assignedRound = round;
     }
 
     public void updateShippingStatus(ShippingStatus shippingStatus) {
         this.shippingStatus = shippingStatus;
+    }
+
+    public void unassign() {
+        this.driver = null;
+        this.shippingStatus = null;
+        this.assignedRound = null;
     }
 }

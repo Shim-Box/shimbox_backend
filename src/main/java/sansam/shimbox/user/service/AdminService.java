@@ -205,17 +205,18 @@ public class AdminService {
         Driver driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
 
+        // 최신 라운드 상품만 조회 (한 번의 쿼리로 최신 라운드만 조회)
         List<Product> products;
-        
         if (shippingStatus == null) {
-            // 모든 상태의 상품 조회 (배송대기, 배송시작, 배송완료)
-            products = productRepository.findByDriverAndShippingStatusInAndIsDeletedFalse(
-                    driver, 
+            products = productRepository.findLatestRoundProductsByDriver(
+                    driver,
                     List.of(ShippingStatus.WAITING, ShippingStatus.STARTED, ShippingStatus.COMPLETED)
             );
         } else {
-            // 특정 상태의 상품만 조회
-            products = productRepository.findByDriverAndShippingStatusAndIsDeletedFalse(driver, shippingStatus);
+            products = productRepository.findLatestRoundProductsByDriverAndStatus(
+                    driver,
+                    shippingStatus
+            );
         }
 
         // 등록된 상품이 없는 경우
