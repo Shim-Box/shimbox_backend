@@ -142,7 +142,15 @@ public class DriverService {
 
     //지역별 배송 상품 조회
     public List<DeliveryGroupDto> getGroupedDeliverySummaryByDriver(Long userId) {
-        List<Product> products = productRepository.findActiveProductsByDriverId(userId);
+        // 기사 조회
+        Driver driver = driverRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.DRIVER_NOT_FOUND));
+
+        // 최신 라운드 상품만 조회 (모든 상태 포함)
+        List<Product> products = productRepository.findLatestRoundProductsByDriver(
+                driver,
+                List.of(ShippingStatus.WAITING, ShippingStatus.STARTED, ShippingStatus.COMPLETED)
+        );
 
         if (products.isEmpty()) {
             throw new CustomException(ErrorCode.DELIVERY_NOT_FOUND);
