@@ -12,6 +12,7 @@ public record MessageDriverHealth(
             @JsonProperty("heartRate") Integer heartRate,
             @JsonProperty("capturedAt") String capturedAt,
             @JsonProperty("score") Double score,
-            @JsonProperty("level") String level
+            @JsonProperty("level") String level,
+            @JsonProperty("isFallDetected") Boolean isFallDetected
     ) {}
 }

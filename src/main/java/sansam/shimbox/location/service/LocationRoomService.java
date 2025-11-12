@@ -187,6 +187,9 @@ public class LocationRoomService {
         // 앱에서 받은 피로도 수치로 구간별 처리
         Double score = payload.path("score").asDouble(0.0);
         String level = getLevelByScore(score);
+        
+        // 낙상 감지 여부 (기본값: false)
+        Boolean isFallDetected = payload.path("isFallDetected").asBoolean(false);
 
         return new MessageDriverHealth.Payload(
                 String.valueOf(userId),
@@ -194,7 +197,8 @@ public class LocationRoomService {
                 heartRate,
                 capturedAt,
                 score,
-                level
+                level,
+                isFallDetected
         );
     }
     
