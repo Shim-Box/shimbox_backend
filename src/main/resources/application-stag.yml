@@ -50,3 +50,8 @@ server:
   port: 8000
   error:
     include-message: always
+
+logging:
+  level:
+    sansam.shimbox.location.service.LocationRoomService: ERROR
+    root: INFO

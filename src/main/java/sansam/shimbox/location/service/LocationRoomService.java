@@ -24,10 +24,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class LocationRoomService {
 
-    private final ObjectMapper om = new ObjectMapper();
+    private final ObjectMapper om;
     private final HeartRateTimelineService heartRateTimelineService;
 
-    public LocationRoomService(HeartRateTimelineService heartRateTimelineService) {
+    public LocationRoomService(ObjectMapper objectMapper, HeartRateTimelineService heartRateTimelineService) {
+        this.om = objectMapper;
         this.heartRateTimelineService = heartRateTimelineService;
         // 주기적으로 오래된 위치 데이터와 죽은 연결 정리
         scheduler.scheduleAtFixedRate(this::cleanupExpiredLocations,
@@ -183,13 +184,23 @@ public class LocationRoomService {
         Integer step = payload.path("step").asInt();
         Integer heartRate = payload.path("heartRate").asInt();
         String capturedAt = payload.path("captured_at").asText(Instant.now().toString());
-
-        // 앱에서 받은 피로도 수치로 구간별 처리
         Double score = payload.path("score").asDouble(0.0);
+        // 피로도 수치에 따른 위험등급 계산 (서버에서 처리)
         String level = getLevelByScore(score);
         
         // 낙상 감지 여부 (기본값: false)
-        Boolean isFallDetected = payload.path("isFallDetected").asBoolean(false);
+        Boolean isFallDetected = false;
+        if (payload.has("isFallDetected")) {
+            JsonNode fallDetectedNode = payload.get("isFallDetected");
+            if (!fallDetectedNode.isNull() && fallDetectedNode.isBoolean()) {
+                isFallDetected = fallDetectedNode.asBoolean();
+                log.debug("Extracted isFallDetected: {} for userId: {}", isFallDetected, userId);
+            } else {
+                log.debug("isFallDetected is not a boolean value, using default: false for userId: {}", userId);
+            }
+        } else {
+            log.debug("isFallDetected field not found, using default: false for userId: {}", userId);
+        }
 
         return new MessageDriverHealth.Payload(
                 String.valueOf(userId),
@@ -300,6 +311,7 @@ public class LocationRoomService {
      * 건강 데이터를 관리자들에게 브로드캐스트
      */
     private void broadcastHealthToAdmins(Long userId, MessageDriverHealth.Payload healthPayload, String region) {
+        log.debug("Broadcasting health data - userId: {}, isFallDetected: {}", userId, healthPayload.isFallDetected());
         MessageDriverHealth message = new MessageDriverHealth("health", healthPayload);
         broadcastToAdmins(message, region);
     }
@@ -310,7 +322,16 @@ public class LocationRoomService {
     private void broadcastToAdmins(Object message, String region) {
         String json;
         try { 
-            json = om.writeValueAsString(message); 
+            json = om.writeValueAsString(message);
+            if (message instanceof MessageDriverHealth) {
+                MessageDriverHealth healthMsg = (MessageDriverHealth) message;
+                log.error("=== Health Message Serialization ===");
+                log.error("isFallDetected value: {}", healthMsg.payload().isFallDetected());
+                log.error("capturedAt value: {}", healthMsg.payload().capturedAt());
+                log.error("Serialized JSON: {}", json);
+                // ObjectMapper 설정 확인
+                log.error("ObjectMapper property naming: {}", om.getPropertyNamingStrategy());
+            }
         } catch (Exception e) { 
             log.error("Failed to serialize message", e);
             return; 
@@ -424,6 +445,7 @@ public class LocationRoomService {
     
     /**
      * 피로도 수치에 따른 위험등급 반환
+     * 프론트에서 계산한 score 값을 기반으로 서버에서 level 계산
      */
     private String getLevelByScore(Double score) {
         if (score >= 0.75) return "위험";
@@ -431,6 +453,4 @@ public class LocationRoomService {
         if (score >= 0.25) return "보통";
         return "좋음";
     }
-
-
 }
